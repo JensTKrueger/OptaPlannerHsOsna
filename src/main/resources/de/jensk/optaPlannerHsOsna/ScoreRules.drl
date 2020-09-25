@@ -1,0 +1,133 @@
+import org.optaplanner.core.api.score.Score;
+import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
+import de.jensk.optaPlannerHsOsna.*
+
+global HardSoftScoreHolder scoreHolder;
+
+
+//HARD CONSTRAINTS
+
+//Ensures that only one event can be take place in a room at a time
+rule "oneEventPerRoom"
+    when
+        Event($leftRoomId : roomId, $leftDay : day, $leftTimeSlot : timeSlot, $leftUniqueId : uniqueId)
+        Event(roomId == $leftRoomId, day == $leftDay, timeSlot == $leftTimeSlot, $leftUniqueId > uniqueId)
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+//Ensures that a teacher only has one event at a time
+rule "oneEventPerTeacher"
+    when
+        $leftEvent : Event(day != null, timeSlot != null, $leftDay : day, $leftTimeSlot: timeSlot, $leftUniqueId : uniqueId)
+        $leftTeacher : Integer() from $leftEvent.teacherIds
+        $rightEvent : Event(day != null, timeSlot != null, $leftDay == day, $leftTimeSlot == timeSlot, $leftUniqueId > uniqueId)
+        $rightTeacher: Integer(equals($leftTeacher) == true) from $rightEvent.teacherIds
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+//Ensures that no event is in a timeslot that is locked by the teacher
+rule "avoidLockedTimeSlots"
+    when
+        $event : Event(day != null, timeSlot != null, $day : getDay(), $timeSlot: timeSlot)
+        $teacherId : Integer() from $event.teacherIds
+        TimePreferenceMap(getPreference($teacherId, $day, $timeSlot) == 1)
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+//ensures that a group of students only has to attend one event at a time
+rule "oneEventPerGroup"
+    when
+    Event(day != null, timeSlot != null, $leftDay : day, $leftTimeSlot : timeSlot, $leftStudyGroups : getStudyGroups(), $leftGroupUniqueId : uniqueId)
+    StudyGroup($leftGroupSpecialCatId : specialCatId, $leftGroupCohortId: cohortId, $leftGroupSpecialId : specialId) from $leftStudyGroups
+    Event(day != null, timeSlot != null, $leftDay == day, $leftTimeSlot == timeSlot, $leftGroupUniqueId > uniqueId, $rightStudyGroups : getStudyGroups())
+    StudyGroup($leftGroupCohortId == cohortId, $leftGroupSpecialCatId != specialCatId || $leftGroupSpecialId == specialId) from $rightStudyGroups
+    then
+    scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+//SOFT CONSTRAINTS
+
+//Rewards events in a timeslot that is wished for by the teacher
+rule "rewardPreferredTimeSlots"
+    when
+        $event : Event(day != null, timeSlot != null, $day : getDay(), $timeSlot: timeSlot)
+        $teacherId : Integer() from $event.teacherIds
+        TimePreferenceMap(getPreference($teacherId, $day, $timeSlot) == 3)
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, 1);
+end
+
+//punishes events which a higher group size than room capacity
+rule "avoidTooSmallRooms"
+    when
+        Event(roomId != null, groupSize != null, $roomId : roomId, $groupSize : groupSize)
+        RoomMap(getCapacity($roomId) < $groupSize);
+    then
+    scoreHolder.addSoftConstraintMatch(kcontext, -20);
+end
+
+rule "punishSameEventDifferentRoom"
+    when
+        Event(roomId != null, id != null, $leftRoomId : roomId, $leftId : id)
+        Event(roomId != null, id != null, $leftRoomId != roomId, $leftId == id )
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, -3);
+end
+
+rule "placeHardEventsEarly"
+    when
+        Event(timeSlot != null, hard != null, hard == true, $timeSlot : timeSlot)
+    then
+    scoreHolder.addSoftConstraintMatch(kcontext, -$timeSlot);
+end
+
+
+//punishes if a group of students has to change the buildig from one timeslot to the next
+rule "punishBuildingChangeWithoutBreak"
+    when
+        Event(day != null, timeSlot != null, $leftDay : day, $leftTimeSlot : timeSlot, $leftStudyGroups : getStudyGroups(), $leftRoomId : roomId )
+        Event(day != null, timeSlot != null, $leftDay == day, $leftTimeSlot == timeSlot + 1 || $leftTimeSlot == timeSlot - 1, $rightStudyGroups : getStudyGroups(), $rightRoomId : roomId )
+        RoomMap(areRoomsInDifferentBuildings($leftRoomId, $rightRoomId) == true)
+        $leftStudyGroup : StudyGroup() from $leftStudyGroups
+        $rightStudyGroup : StudyGroup($leftStudyGroup.cohortId == cohortId, $leftStudyGroup.specialCatId != specialCatId || $leftStudyGroup.specialId == specialId) from $rightStudyGroups
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, -5);
+end
+
+rule "punishMissingRoomFeatures"
+    when
+        Event(roomId != null, featureIds != null, $roomId : roomId, $wantedFeatures: featureIds)
+        $wantedFeatureId : Integer () from $wantedFeatures;
+        RoomMap(doesRoomHaveFeature($roomId, $wantedFeatureId) == false)
+    then
+     scoreHolder.addSoftConstraintMatch(kcontext, -30);
+end
+
+//super unsicher bei dem ding aber eigentlich müsste es so richtig sein auch wenns unglaublich contraintuitiv ist
+//rule "preventGapBetweenSameEvents"
+//    when
+//        Event(day != null, timeSlot != null, $leftDay : day, $leftTimeSlot: timeSlot, $leftId : id, $leftUniqueId : uniqueId)
+//        Event($leftUniqueId != uniqueId, day != null, timeSlot != null , $leftId == id, $leftDay == day, timeSlot > $leftTimeSlot + 1 )
+//    then
+//        scoreHolder.addSoftConstraintMatch(kcontext, -10);
+//end
+
+rule "test2HPM"
+    when
+       Event(day != null, timeSlot != null, $leftDay : day, $leftTimeSlot: timeSlot, $leftId : id, $leftUniqueId : uniqueId)
+       Event($unique2: uniqueId, $leftUniqueId != uniqueId, day != null, timeSlot != null , $leftId == id, $leftDay == day, $leftTimeSlot == timeSlot - 1)
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, +10);
+end
+
+rule "test2HPM2"
+    when
+       Event(day != null, timeSlot != null, $leftDay : day, $leftTimeSlot: timeSlot, $leftId : id, $leftUniqueId : uniqueId)
+       Event($unique2: uniqueId, $leftUniqueId != uniqueId, day != null, timeSlot != null , $leftId == id, $leftDay == day, $leftTimeSlot == timeSlot - 2)
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, -20);
+end
