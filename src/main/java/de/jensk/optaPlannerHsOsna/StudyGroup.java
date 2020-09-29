@@ -30,4 +30,13 @@ public class StudyGroup {
     public void setCohortId(int cohortId) {
         this.cohortId = cohortId;
     }
+
+    @Override
+    public String toString() {
+        return "StudyGroup{" +
+                "specialId=" + specialId +
+                ", specialCatId=" + specialCatId +
+                ", cohortId=" + cohortId +
+                '}';
+    }
 }

@@ -14,6 +14,7 @@ public class App {
         unsolvedSchedule.setEventList(DbConnector.getEventList());
         unsolvedSchedule.setTimePreferenceMap(DbConnector.getTimePreferenceMap());
         unsolvedSchedule.setRoomMap(DbConnector.getRoomMap());
+        unsolvedSchedule.setCustomScoreMethodHolder(new CustomScoreMethodHolder());
 
 
 

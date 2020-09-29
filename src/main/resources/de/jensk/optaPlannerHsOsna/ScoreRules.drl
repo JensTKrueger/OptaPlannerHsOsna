@@ -107,27 +107,82 @@ rule "punishMissingRoomFeatures"
      scoreHolder.addSoftConstraintMatch(kcontext, -30);
 end
 
-//super unsicher bei dem ding aber eigentlich müsste es so richtig sein auch wenns unglaublich contraintuitiv ist
-//rule "preventGapBetweenSameEvents"
-//    when
-//        Event(day != null, timeSlot != null, $leftDay : day, $leftTimeSlot: timeSlot, $leftId : id, $leftUniqueId : uniqueId)
-//        Event($leftUniqueId != uniqueId, day != null, timeSlot != null , $leftId == id, $leftDay == day, timeSlot > $leftTimeSlot + 1 )
-//    then
-//        scoreHolder.addSoftConstraintMatch(kcontext, -10);
-//end
 
-rule "test2HPM"
+rule "1HPM1"
     when
-       Event(day != null, timeSlot != null, $leftDay : day, $leftTimeSlot: timeSlot, $leftId : id, $leftUniqueId : uniqueId)
-       Event($unique2: uniqueId, $leftUniqueId != uniqueId, day != null, timeSlot != null , $leftId == id, $leftDay == day, $leftTimeSlot == timeSlot - 1)
+        Event(hpm == 1, day != null, timeSlot != null, $leftDay : day, $timeSlot1: timeSlot, $leftId : id, $unique1 : uniqueId)
+        Event(day != null, timeSlot != null, $leftId == id, $leftDay == day)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, +10);
+    scoreHolder.addSoftConstraintMatch(kcontext, -10);
 end
 
-rule "test2HPM2"
+
+
+
+rule "2HPM1"
     when
-       Event(day != null, timeSlot != null, $leftDay : day, $leftTimeSlot: timeSlot, $leftId : id, $leftUniqueId : uniqueId)
-       Event($unique2: uniqueId, $leftUniqueId != uniqueId, day != null, timeSlot != null , $leftId == id, $leftDay == day, $leftTimeSlot == timeSlot - 2)
+        Event(hpm == 2, day != null, timeSlot != null, $leftDay : day, $timeSlot1: timeSlot, $leftId : id, $unique1 : uniqueId)
+        Event(day != null, timeSlot != null, $leftId == id, $leftDay == day, $timeSlot1 == timeSlot + 1  || $timeSlot1 == timeSlot - 1)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -20);
+    scoreHolder.addSoftConstraintMatch(kcontext, 5);
 end
+
+rule "2HPM2"
+    when
+        Event(hpm == 2, day != null, timeSlot != null, $leftDay : day, $timeSlot1: timeSlot, $leftId : id, $unique1 : uniqueId)
+        Event(day != null, timeSlot != null, $leftId == id, $leftDay == day, $timeSlot1 == timeSlot + 1  || $timeSlot1 == timeSlot - 1)
+        Event(day != null, timeSlot != null, $leftId == id, $leftDay == day, $timeSlot1 == timeSlot + 2  || $timeSlot1 == timeSlot - 2)
+    then
+    scoreHolder.addSoftConstraintMatch(kcontext, -5);
+end
+
+rule "2HPM3"
+    when
+        Event(hpm == 2, day != null, timeSlot != null, $leftDay : day, $timeSlot1: timeSlot, $leftId : id, $unique1 : uniqueId)
+        Event(day != null, timeSlot != null, $leftId == id, $leftDay == day, $timeSlot1 >= timeSlot + 2 )
+    then
+    scoreHolder.addSoftConstraintMatch(kcontext, -10);
+end
+
+
+
+
+rule "noGapsForStudents1"
+    when
+         $event1 : Event(day != null, timeSlot != null, $day1 : day, $timeSlot1 : timeSlot, $unique1 : uniqueId)
+         $event2 : Event(uniqueId != $unique1, day != null, timeSlot != null, $day2 : day, $timeSlot2 : timeSlot, $unique2 : uniqueId, $day1 != day || !($timeSlot1 + 1 == timeSlot))
+         $event3 : Event(uniqueId != $unique2, day != null, timeSlot != null, $day3 : day, $timeSlot3 : timeSlot, $unique3 : uniqueId, $day1 == day, $timeSlot1 + 2 == timeSlot)
+         CustomScoreMethodHolder(checkForCommonGroup($event1, $event2, $event3))
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, -200);
+end
+
+rule "noGapsForStudents2"
+    when
+
+         $event1 : Event(day != null, timeSlot != null, $day1 : day, $timeSlot1 : timeSlot, $unique1 : uniqueId)
+         $event2 : Event(uniqueId != $unique1, day != null, timeSlot != null, $day2 : day, $timeSlot2 : timeSlot, $unique2 : uniqueId, $day1 != day || !($timeSlot1 + 1 == timeSlot || $timeSlot1 + 2 == timeSlot))
+         $event3 : Event(uniqueId != $unique1, uniqueId != $unique2, day != null, timeSlot != null, $day3 : day, $timeSlot3 : timeSlot, $unique3 : uniqueId, $day1 != day || !($timeSlot1 + 1 == timeSlot || $timeSlot1 + 2 == timeSlot))
+         $event4 : Event(uniqueId != $unique2, uniqueId != $unique3, day != null, timeSlot != null, $day4 : day, $timeSlot4 : timeSlot, $unique4 : uniqueId, $day1 == day, $timeSlot1 + 3 == timeSlot)
+         $calc: CustomScoreMethodHolder()
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, ($calc.checkForCommonGroup($event1,$event2,$event4)?-100:0) +
+                                                     ($calc.checkForCommonGroup($event1,$event3,$event4)?-100:0));
+end
+
+
+rule "noGapsForStudents3"
+    when
+
+         $event1 : Event(day != null, timeSlot != null, $day1 : day, $timeSlot1 : timeSlot, $unique1 : uniqueId)
+         $event2 : Event(uniqueId != $unique1, day != null, timeSlot != null, $day2 : day, $timeSlot2 : timeSlot, $unique2 : uniqueId, $day1 != day || !($timeSlot1 + 1 == timeSlot || $timeSlot1 + 2 == timeSlot|| $timeSlot1 + 3 == timeSlot))
+         $event3 : Event(uniqueId != $unique1, uniqueId != $unique2,  day != null, timeSlot != null, $day3 : day, $timeSlot3 : timeSlot, $unique3 : uniqueId, $day1 != day || !($timeSlot1 + 1 == timeSlot || $timeSlot1 + 2 == timeSlot || $timeSlot1 + 3 == timeSlot))
+         $event4 : Event(uniqueId != $unique1, uniqueId != $unique2, uniqueId != $unique3, day != null, timeSlot != null, $day4 : day, $timeSlot4 : timeSlot, $unique4 : uniqueId, $day1 != day || !($timeSlot1 + 1 == timeSlot || $timeSlot1 + 2 == timeSlot || $timeSlot1 + 3 == timeSlot))
+         $event5 : Event(uniqueId != $unique2, uniqueId != $unique3, uniqueId != $unique4 , day != null, timeSlot != null, $day5 : day, $timeSlot5 : timeSlot, $unique5 : uniqueId, $day1 == day, $timeSlot1 + 4 == timeSlot)
+         $calc: CustomScoreMethodHolder()
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, ($calc.checkForCommonGroup($event1,$event2,$event5)?-50:0) +
+                                                     ($calc.checkForCommonGroup($event1,$event3,$event5)?-50:0) +
+                                                     ($calc.checkForCommonGroup($event1,$event4,$event5)?-50:0));
+end
+

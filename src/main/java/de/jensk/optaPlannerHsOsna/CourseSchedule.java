@@ -17,10 +17,10 @@ public class CourseSchedule {
     private List<Event> eventList;
     private HardSoftScore score;
     private TimePreferenceMap timePreferenceMap;
+    private CustomScoreMethodHolder customScoreMethodHolder;
 
 
     public CourseSchedule(){
-        System.out.println("new Schedule");
         timeSlotList = new ArrayList<Integer>();
         timeSlotList.add(0);
         timeSlotList.add(1);
@@ -36,6 +36,7 @@ public class CourseSchedule {
         dayList.add(3);
         dayList.add(4);
     }
+
 
 
 
@@ -69,7 +70,6 @@ public class CourseSchedule {
 
 
     public void setEventList(List<Event> eventList) {
-        System.out.println("getEventList");
         this.eventList = eventList;
     }
 
@@ -101,7 +101,15 @@ public class CourseSchedule {
 
     @PlanningEntityCollectionProperty
     public List<Event> getEventList() {
-        System.out.println("getEventList");
         return eventList;
+    }
+
+    public void setCustomScoreMethodHolder(CustomScoreMethodHolder customScoreMethodHolder) {
+        this.customScoreMethodHolder = customScoreMethodHolder;
+    }
+
+    @ProblemFactProperty
+    public CustomScoreMethodHolder getCustomScoreMethodHolder() {
+        return customScoreMethodHolder;
     }
 }
