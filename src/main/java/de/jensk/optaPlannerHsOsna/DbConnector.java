@@ -33,12 +33,31 @@ public class DbConnector {
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             while(rs.next()){
-                result.putPreference(rs.getInt("userId"), rs.getInt("day"), rs.getInt("timeslot"), rs.getInt("pref"));
+                result.putPreference(rs.getInt("user_id"), rs.getInt("day"), rs.getInt("timeslot"), rs.getInt("pref"));
             }
         }catch (Exception e){
             e.printStackTrace();
         }
         return result;
+    }
+
+    public static String getCommand(){
+        try {
+            if(con == null || con.isClosed()) connectToDb();
+            String query = "SELECT * FROM communication ORDER BY id;";
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while(rs.next()){
+                String command = rs.getString("command");
+                String query2 = "DELETE FROM communication WHERE id = '"+rs.getInt("id")+"';";
+                Statement stmt2 = con.createStatement();
+                stmt2.executeUpdate(query2);
+                return command;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

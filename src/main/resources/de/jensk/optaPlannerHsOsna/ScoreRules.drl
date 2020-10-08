@@ -67,13 +67,15 @@ rule "avoidTooSmallRooms"
         Event(roomId != null, groupSize != null, $roomId : roomId, $groupSize : groupSize)
         RoomMap(getCapacity($roomId) < $groupSize);
     then
-    scoreHolder.addSoftConstraintMatch(kcontext, -20);
+        scoreHolder.addSoftConstraintMatch(kcontext, -20);
 end
 
+
+//todo: wurde verändert. ist in der in der arbeit selber noch nicht angepasst worden
 rule "punishSameEventDifferentRoom"
     when
-        Event(roomId != null, id != null, $leftRoomId : roomId, $leftId : id)
-        Event(roomId != null, id != null, $leftRoomId != roomId, $leftId == id )
+        Event(roomId != null, id != null, $leftRoomId : roomId, $leftId : id, $leftUniqueId :uniqueId)
+        Event(roomId != null, id != null, $leftRoomId != roomId, $leftId == id, $leftUniqueId > uniqueId)
     then
         scoreHolder.addSoftConstraintMatch(kcontext, -3);
 end
@@ -90,7 +92,7 @@ end
 rule "punishBuildingChangeWithoutBreak"
     when
         Event(day != null, timeSlot != null, $leftDay : day, $leftTimeSlot : timeSlot, $leftStudyGroups : getStudyGroups(), $leftRoomId : roomId )
-        Event(day != null, timeSlot != null, $leftDay == day, $leftTimeSlot == timeSlot + 1 || $leftTimeSlot == timeSlot - 1, $rightStudyGroups : getStudyGroups(), $rightRoomId : roomId )
+        Event(day != null, timeSlot != null, $leftDay == day, $leftTimeSlot == timeSlot + 1, $rightStudyGroups : getStudyGroups(), $rightRoomId : roomId )
         RoomMap(areRoomsInDifferentBuildings($leftRoomId, $rightRoomId) == true)
         $leftStudyGroup : StudyGroup() from $leftStudyGroups
         $rightStudyGroup : StudyGroup($leftStudyGroup.cohortId == cohortId, $leftStudyGroup.specialCatId != specialCatId || $leftStudyGroup.specialId == specialId) from $rightStudyGroups
@@ -98,14 +100,17 @@ rule "punishBuildingChangeWithoutBreak"
         scoreHolder.addSoftConstraintMatch(kcontext, -5);
 end
 
+//todo: wurde verändert. ist in der in der arbeit selber noch nicht angepasst worden
 rule "punishMissingRoomFeatures"
     when
         Event(roomId != null, featureIds != null, $roomId : roomId, $wantedFeatures: featureIds)
         $wantedFeatureId : Integer () from $wantedFeatures;
         RoomMap(doesRoomHaveFeature($roomId, $wantedFeatureId) == false)
     then
-     scoreHolder.addSoftConstraintMatch(kcontext, -30);
+     scoreHolder.addSoftConstraintMatch(kcontext, -10);
 end
+
+
 
 
 rule "1HPM1"
@@ -115,8 +120,6 @@ rule "1HPM1"
     then
     scoreHolder.addSoftConstraintMatch(kcontext, -10);
 end
-
-
 
 
 rule "2HPM1"
@@ -145,7 +148,7 @@ rule "2HPM3"
 end
 
 
-
+/*
 
 rule "noGapsForStudents1"
     when
@@ -154,7 +157,7 @@ rule "noGapsForStudents1"
          $event3 : Event(uniqueId != $unique2, day != null, timeSlot != null, $day3 : day, $timeSlot3 : timeSlot, $unique3 : uniqueId, $day1 == day, $timeSlot1 + 2 == timeSlot)
          CustomScoreMethodHolder(checkForCommonGroup($event1, $event2, $event3))
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -200);
+        scoreHolder.addSoftConstraintMatch(kcontext, -2);
 end
 
 rule "noGapsForStudents2"
@@ -166,8 +169,8 @@ rule "noGapsForStudents2"
          $event4 : Event(uniqueId != $unique2, uniqueId != $unique3, day != null, timeSlot != null, $day4 : day, $timeSlot4 : timeSlot, $unique4 : uniqueId, $day1 == day, $timeSlot1 + 3 == timeSlot)
          $calc: CustomScoreMethodHolder()
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, ($calc.checkForCommonGroup($event1,$event2,$event4)?-100:0) +
-                                                     ($calc.checkForCommonGroup($event1,$event3,$event4)?-100:0));
+        scoreHolder.addSoftConstraintMatch(kcontext, ($calc.checkForCommonGroup($event1,$event2,$event4)?-10:0) +
+                                                     ($calc.checkForCommonGroup($event1,$event3,$event4)?-10:0));
 end
 
 
@@ -181,8 +184,20 @@ rule "noGapsForStudents3"
          $event5 : Event(uniqueId != $unique2, uniqueId != $unique3, uniqueId != $unique4 , day != null, timeSlot != null, $day5 : day, $timeSlot5 : timeSlot, $unique5 : uniqueId, $day1 == day, $timeSlot1 + 4 == timeSlot)
          $calc: CustomScoreMethodHolder()
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, ($calc.checkForCommonGroup($event1,$event2,$event5)?-50:0) +
-                                                     ($calc.checkForCommonGroup($event1,$event3,$event5)?-50:0) +
-                                                     ($calc.checkForCommonGroup($event1,$event4,$event5)?-50:0));
+        scoreHolder.addSoftConstraintMatch(kcontext, ($calc.checkForCommonGroup($event1,$event2,$event5)?-5:0) +
+                                                     ($calc.checkForCommonGroup($event1,$event3,$event5)?-5:0) +
+                                                     ($calc.checkForCommonGroup($event1,$event4,$event5)?-5:0));
 end
+
+rule "notFirstAndLastForStudents"
+    when
+        Event(day != null, timeSlot != null, $day1 : day, unique1 : uniqueId, timeSlot == 0, $groups1 : getStudyGroups())
+        Event(day != null, timeSlot != null, day == $day1, timeSlot == 5, uniqueId != unique1, $groups2 : getStudyGroups())
+        $group1 : StudyGroup($cohort1 : cohortId, $specialcat1 : specialCatId, $special1 : specialId) from $groups1
+        StudyGroup((cohortId == $cohort1 && specialCatId != $specialcat1) || specialId == $special1) from $groups2
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, -20);
+end
+
+*/
 

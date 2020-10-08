@@ -17,12 +17,14 @@ jar {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    // https://mvnrepository.com/artifact/org.optaplanner/optaplanner-core
+    testImplementation group: 'junit', name: 'junit', version: '4.13'
+
     compile group: 'org.optaplanner', name: 'optaplanner-core', version: '7.39.0.Final'
-    // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
+
+    compile group: 'org.optaplanner', name: 'optaplanner-test', version: '7.39.0.Final'
+
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.30'
-    // https://mvnrepository.com/artifact/mysql/mysql-connector-java
+
     compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.20'
 
 

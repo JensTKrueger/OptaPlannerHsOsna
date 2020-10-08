@@ -17,10 +17,6 @@ public class RoomMap {
         featureListMap = new HashMap<>();
     }
 
-    public Boolean test(){
-        System.out.println("TEST");
-        return true;
-    }
 
     public Boolean areRoomsInDifferentBuildings(Integer roomId1, Integer roomId2){
         return !getBuildingId(roomId1).equals(getBuildingId(roomId2));

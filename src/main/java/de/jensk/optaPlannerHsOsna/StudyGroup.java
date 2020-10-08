@@ -7,6 +7,10 @@ public class StudyGroup {
     private int specialCatId;
     private int cohortId;
 
+
+    public StudyGroup() {
+    }
+
     public int getSpecialId() {
         return specialId;
     }
@@ -38,5 +42,12 @@ public class StudyGroup {
                 ", specialCatId=" + specialCatId +
                 ", cohortId=" + cohortId +
                 '}';
+    }
+
+    //this costructor is only used in JUnit tests
+    public StudyGroup(int specialId, int specialCatId, int cohortId) {
+        this.specialId = specialId;
+        this.specialCatId = specialCatId;
+        this.cohortId = cohortId;
     }
 }

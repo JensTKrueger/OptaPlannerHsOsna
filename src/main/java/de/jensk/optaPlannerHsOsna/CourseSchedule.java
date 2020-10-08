@@ -18,9 +18,11 @@ public class CourseSchedule {
     private HardSoftScore score;
     private TimePreferenceMap timePreferenceMap;
     private CustomScoreMethodHolder customScoreMethodHolder;
+    private List<List<StudyGroup>> allPossibleGroupCombinations;
 
 
     public CourseSchedule(){
+        allPossibleGroupCombinations = new ArrayList<List<StudyGroup>>();
         timeSlotList = new ArrayList<Integer>();
         timeSlotList.add(0);
         timeSlotList.add(1);
@@ -37,8 +39,17 @@ public class CourseSchedule {
         dayList.add(4);
     }
 
+    public List<List<StudyGroup>> getAllPossibleGroupCombinations() {
+        return allPossibleGroupCombinations;
+    }
 
+    public void setAllPossibleGroupCombinations(List<List<StudyGroup>> allPossibleGroupCombinations) {
+        this.allPossibleGroupCombinations = allPossibleGroupCombinations;
+    }
 
+    public void addPossibleGroupCombination(List<StudyGroup> list){
+        allPossibleGroupCombinations.add(list);
+    }
 
     @ProblemFactProperty
     public RoomMap getRoomMap() {

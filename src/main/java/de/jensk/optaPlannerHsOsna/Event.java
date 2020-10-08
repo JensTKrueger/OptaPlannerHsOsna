@@ -20,6 +20,9 @@ public class Event {
     private Integer groupSize;
     private Boolean hard;
 
+    public Event() {
+    }
+
     public Boolean getHard() {
         return hard;
     }
@@ -119,4 +122,21 @@ public class Event {
     public void setStudyGroups(List<StudyGroup> studyGroups) {
         this.studyGroups = studyGroups;
     }
+
+
+    //the following constructors are only used by the JUnit tests!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+    public Event(Integer day, Integer timeSlot, Integer roomId, Integer uniqueId, List<Integer> teacherIds, Integer groupSize, Integer id, Boolean hard) {
+        this.day = day;
+        this.timeSlot = timeSlot;
+        this.roomId = roomId;
+        this.uniqueId = uniqueId;
+        this.teacherIds = teacherIds;
+        this.groupSize = groupSize;
+        this.id = id;
+        this.hard = hard;
+    }
+
+
 }
