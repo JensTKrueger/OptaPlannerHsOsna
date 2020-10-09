@@ -89,10 +89,11 @@ end
 
 
 //punishes if a group of students has to change the buildig from one timeslot to the next
+//todo: wurde verändert. ist in der in der arbeit selber noch nicht angepasst worden
 rule "punishBuildingChangeWithoutBreak"
     when
-        Event(day != null, timeSlot != null, $leftDay : day, $leftTimeSlot : timeSlot, $leftStudyGroups : getStudyGroups(), $leftRoomId : roomId )
-        Event(day != null, timeSlot != null, $leftDay == day, $leftTimeSlot == timeSlot + 1, $rightStudyGroups : getStudyGroups(), $rightRoomId : roomId )
+        Event(roomId != null, day != null, timeSlot != null, $leftDay : day, $leftTimeSlot : timeSlot, $leftStudyGroups : getStudyGroups(), $leftRoomId : roomId )
+        Event(roomId != null, day != null, timeSlot != null, $leftDay == day, $leftTimeSlot == timeSlot + 1, $rightStudyGroups : getStudyGroups(), $rightRoomId : roomId )
         RoomMap(areRoomsInDifferentBuildings($leftRoomId, $rightRoomId) == true)
         $leftStudyGroup : StudyGroup() from $leftStudyGroups
         $rightStudyGroup : StudyGroup($leftStudyGroup.cohortId == cohortId, $leftStudyGroup.specialCatId != specialCatId || $leftStudyGroup.specialId == specialId) from $rightStudyGroups

@@ -47,8 +47,8 @@ public class ScoreConstraintTest {
 
     @Test
     public void avoidLockedTimeSlots(){
-        Event e1 = new Event(1,1,1,1, Arrays.asList(1, 2),null,null,null);
-        Event e2 = new Event(1,1,1,2, Arrays.asList(2, 3),null,null,null);
+        Event e1 = new Event(1,1,null,1, Arrays.asList(1, 2),null,null,null);
+        Event e2 = new Event(1,1,null,2, Arrays.asList(2, 3),null,null,null);
         CourseSchedule solution = new CourseSchedule();
         solution.setEventList(Arrays.asList(e1,e2));
         fillCourseScheduleWithTestFacts(solution);
@@ -97,9 +97,9 @@ public class ScoreConstraintTest {
     @Test
     public void avoidTooSmallRooms(){
         int factor = -20;
-        Event e1 = new Event(1,1,3,1, null,60,null,null);
-        Event e2 = new Event(1,1,2,2, null,55,null,null);
-        Event e3 = new Event(1,1,1,3, null,40,null,null);
+        Event e1 = new Event(null,null,3,1, null,60,null,null);
+        Event e2 = new Event(null,null,2,2, null,55,null,null);
+        Event e3 = new Event(null,null,1,3, null,40,null,null);
         CourseSchedule solution = new CourseSchedule();
         solution.setEventList(Arrays.asList(e1, e2, e3));
         fillCourseScheduleWithTestFacts(solution);
@@ -185,7 +185,6 @@ public class ScoreConstraintTest {
 
     private void fillCourseScheduleWithTestFacts(CourseSchedule solution){
         solution.setRoomList(Arrays.asList(1,2,3));
-
         TimePreferenceMap timePreferenceMap = new TimePreferenceMap();
         timePreferenceMap.putPreference(1,1,1,1);
         timePreferenceMap.putPreference(2,1,1,1);
@@ -197,7 +196,6 @@ public class ScoreConstraintTest {
         timePreferenceMap.putPreference(2,1,3,3);
         timePreferenceMap.putPreference(3,1,3,3);
         solution.setTimePreferenceMap(timePreferenceMap);
-
         RoomMap roomMap = new RoomMap();
         roomMap.putCapacity(1,20);
         roomMap.putCapacity(2,40);
