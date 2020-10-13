@@ -1,6 +1,7 @@
 package de.jensk.optaPlannerHsOsna;
 
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
+import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 import java.util.List;
@@ -46,6 +47,7 @@ public class Event {
     public void setFeatureIds(List<Integer> featureIds) {
         this.featureIds = featureIds;
     }
+
 
 
     public List<Integer> getTeacherIds() {
@@ -107,6 +109,7 @@ public class Event {
         this.id = id;
     }
 
+    @PlanningId
     public Integer getUniqueId() {
         return uniqueId;
     }

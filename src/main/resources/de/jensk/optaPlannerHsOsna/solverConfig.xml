@@ -7,17 +7,34 @@
         <scoreDrl>de/jensk/optaPlannerHsOsna/ScoreRules.drl</scoreDrl>
     </scoreDirectorFactory>
 
-    <termination>
-        <secondsSpentLimit>20</secondsSpentLimit>
-    </termination>
+    <moveThreadCount>AUTO</moveThreadCount>
+
     <constructionHeuristic><constructionHeuristicType>FIRST_FIT</constructionHeuristicType></constructionHeuristic>
     <localSearch>
+        <unionMoveSelector>
+            <changeMoveSelector>
+                <selectionOrder>RANDOM</selectionOrder>
+            </changeMoveSelector>
+            <swapMoveSelector>
+                <selectionOrder>RANDOM</selectionOrder>
+            </swapMoveSelector>
+            <!--<moveListFactory>
+                <selectionOrder>RANDOM</selectionOrder>
+                <moveListFactoryClass>de.jensk.optaPlannerHsOsna.Customs.ChangeDayTimeRoomMoveFactory</moveListFactoryClass>
+            </moveListFactory>-->
+            <moveIteratorFactory>
+                <selectionOrder>RANDOM</selectionOrder>
+                <moveIteratorFactoryClass>de.jensk.optaPlannerHsOsna.Customs.ChangeDayTimeRoomMoveIteratorFactory</moveIteratorFactoryClass>
+            </moveIteratorFactory>
+        </unionMoveSelector>
         <acceptor>
-            <simulatedAnnealingStartingTemperature>2hard/100soft</simulatedAnnealingStartingTemperature>
-            <entityTabuSize>5</entityTabuSize>
+            <entityTabuSize>7</entityTabuSize>
         </acceptor>
         <forager>
-            <acceptedCountLimit>1</acceptedCountLimit>
+            <acceptedCountLimit>1000</acceptedCountLimit>
         </forager>
+        <termination>
+            <unimprovedStepCountLimit>100</unimprovedStepCountLimit>
+        </termination>
     </localSearch>
 </solver>

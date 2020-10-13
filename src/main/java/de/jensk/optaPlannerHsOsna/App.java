@@ -1,5 +1,6 @@
 package de.jensk.optaPlannerHsOsna;
 
+import org.optaplanner.core.api.score.ScoreManager;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
 
@@ -34,5 +35,10 @@ public class App {
         Solver solver = solverFactory.buildSolver();
         CourseSchedule solved = (CourseSchedule) solver.solve(unsolvedSchedule);
         DbConnector.writeResultsToDb(solved);
+        /*
+        ScoreManager<CourseSchedule> manager = ScoreManager.create(solverFactory);
+        System.out.println(manager.explainScore(solved));
+        */
+
     }
 }

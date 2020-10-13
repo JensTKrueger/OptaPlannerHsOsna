@@ -2,6 +2,8 @@ import org.optaplanner.core.api.score.Score;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
 import de.jensk.optaPlannerHsOsna.*
+import java.util.ArrayList;
+
 
 global HardSoftScoreHolder scoreHolder;
 
@@ -77,7 +79,7 @@ rule "punishSameEventDifferentRoom"
         Event(roomId != null, id != null, $leftRoomId : roomId, $leftId : id, $leftUniqueId :uniqueId)
         Event(roomId != null, id != null, $leftRoomId != roomId, $leftId == id, $leftUniqueId > uniqueId)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -3);
+        scoreHolder.addSoftConstraintMatch(kcontext, -1);
 end
 
 rule "placeHardEventsEarly"
@@ -85,6 +87,7 @@ rule "placeHardEventsEarly"
         Event(timeSlot != null, hard != null, hard == true, $timeSlot : timeSlot)
     then
     scoreHolder.addSoftConstraintMatch(kcontext, -$timeSlot);
+    System.out.println("HARD FIRED");
 end
 
 
@@ -114,13 +117,25 @@ end
 
 
 
-rule "1HPM1"
+rule "2HPM1"
     when
-        Event(hpm == 1, day != null, timeSlot != null, $leftDay : day, $timeSlot1: timeSlot, $leftId : id, $unique1 : uniqueId)
-        Event(day != null, timeSlot != null, $leftId == id, $leftDay == day)
+        Event(hpm == 2, day != null, timeSlot != null, $leftDay : day, $timeSlot1: timeSlot, $leftId : id, $unique1 : uniqueId)
+        Event(hpm == 2, day != null, timeSlot != null, $leftDay == day, $timeSlot1 > 1 + timeSlot, $leftId == id)
     then
-    scoreHolder.addSoftConstraintMatch(kcontext, -10);
+    scoreHolder.addSoftConstraintMatch(kcontext, -50);
 end
+
+
+rule "2HPM"
+    when
+        Event(hpm == 2, day != null, timeSlot != null, $leftDay : day, $timeSlot1: timeSlot, $leftId : id, $unique1 : uniqueId)
+        ArrayList(size != 2 , $size : size())
+            from collect (Event(day != null, timeSlot != null, $leftDay == day, $leftId == id))
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, -100 * Math.abs( 2 - $size));
+end
+
+/*
 
 
 rule "2HPM1"
@@ -128,17 +143,9 @@ rule "2HPM1"
         Event(hpm == 2, day != null, timeSlot != null, $leftDay : day, $timeSlot1: timeSlot, $leftId : id, $unique1 : uniqueId)
         Event(day != null, timeSlot != null, $leftId == id, $leftDay == day, $timeSlot1 == timeSlot + 1  || $timeSlot1 == timeSlot - 1)
     then
-    scoreHolder.addSoftConstraintMatch(kcontext, 5);
+    scoreHolder.addSoftConstraintMatch(kcontext, 20);
 end
 
-rule "2HPM2"
-    when
-        Event(hpm == 2, day != null, timeSlot != null, $leftDay : day, $timeSlot1: timeSlot, $leftId : id, $unique1 : uniqueId)
-        Event(day != null, timeSlot != null, $leftId == id, $leftDay == day, $timeSlot1 == timeSlot + 1  || $timeSlot1 == timeSlot - 1)
-        Event(day != null, timeSlot != null, $leftId == id, $leftDay == day, $timeSlot1 == timeSlot + 2  || $timeSlot1 == timeSlot - 2)
-    then
-    scoreHolder.addSoftConstraintMatch(kcontext, -5);
-end
 
 rule "2HPM3"
     when
@@ -147,58 +154,29 @@ rule "2HPM3"
     then
     scoreHolder.addSoftConstraintMatch(kcontext, -10);
 end
-
+*/
 
 /*
-
-rule "noGapsForStudents1"
+rule "2HPM"
     when
-         $event1 : Event(day != null, timeSlot != null, $day1 : day, $timeSlot1 : timeSlot, $unique1 : uniqueId)
-         $event2 : Event(uniqueId != $unique1, day != null, timeSlot != null, $day2 : day, $timeSlot2 : timeSlot, $unique2 : uniqueId, $day1 != day || !($timeSlot1 + 1 == timeSlot))
-         $event3 : Event(uniqueId != $unique2, day != null, timeSlot != null, $day3 : day, $timeSlot3 : timeSlot, $unique3 : uniqueId, $day1 == day, $timeSlot1 + 2 == timeSlot)
-         CustomScoreMethodHolder(checkForCommonGroup($event1, $event2, $event3))
+    $event1 : Event(day != null, timeSlot != null, $day1 : day, $timeSlot1: timeSlot, $uniqueId1 : uniqueId, $id1 : id)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -2);
+
 end
-
-rule "noGapsForStudents2"
-    when
-
-         $event1 : Event(day != null, timeSlot != null, $day1 : day, $timeSlot1 : timeSlot, $unique1 : uniqueId)
-         $event2 : Event(uniqueId != $unique1, day != null, timeSlot != null, $day2 : day, $timeSlot2 : timeSlot, $unique2 : uniqueId, $day1 != day || !($timeSlot1 + 1 == timeSlot || $timeSlot1 + 2 == timeSlot))
-         $event3 : Event(uniqueId != $unique1, uniqueId != $unique2, day != null, timeSlot != null, $day3 : day, $timeSlot3 : timeSlot, $unique3 : uniqueId, $day1 != day || !($timeSlot1 + 1 == timeSlot || $timeSlot1 + 2 == timeSlot))
-         $event4 : Event(uniqueId != $unique2, uniqueId != $unique3, day != null, timeSlot != null, $day4 : day, $timeSlot4 : timeSlot, $unique4 : uniqueId, $day1 == day, $timeSlot1 + 3 == timeSlot)
-         $calc: CustomScoreMethodHolder()
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext, ($calc.checkForCommonGroup($event1,$event2,$event4)?-10:0) +
-                                                     ($calc.checkForCommonGroup($event1,$event3,$event4)?-10:0));
-end
-
-
-rule "noGapsForStudents3"
-    when
-
-         $event1 : Event(day != null, timeSlot != null, $day1 : day, $timeSlot1 : timeSlot, $unique1 : uniqueId)
-         $event2 : Event(uniqueId != $unique1, day != null, timeSlot != null, $day2 : day, $timeSlot2 : timeSlot, $unique2 : uniqueId, $day1 != day || !($timeSlot1 + 1 == timeSlot || $timeSlot1 + 2 == timeSlot|| $timeSlot1 + 3 == timeSlot))
-         $event3 : Event(uniqueId != $unique1, uniqueId != $unique2,  day != null, timeSlot != null, $day3 : day, $timeSlot3 : timeSlot, $unique3 : uniqueId, $day1 != day || !($timeSlot1 + 1 == timeSlot || $timeSlot1 + 2 == timeSlot || $timeSlot1 + 3 == timeSlot))
-         $event4 : Event(uniqueId != $unique1, uniqueId != $unique2, uniqueId != $unique3, day != null, timeSlot != null, $day4 : day, $timeSlot4 : timeSlot, $unique4 : uniqueId, $day1 != day || !($timeSlot1 + 1 == timeSlot || $timeSlot1 + 2 == timeSlot || $timeSlot1 + 3 == timeSlot))
-         $event5 : Event(uniqueId != $unique2, uniqueId != $unique3, uniqueId != $unique4 , day != null, timeSlot != null, $day5 : day, $timeSlot5 : timeSlot, $unique5 : uniqueId, $day1 == day, $timeSlot1 + 4 == timeSlot)
-         $calc: CustomScoreMethodHolder()
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext, ($calc.checkForCommonGroup($event1,$event2,$event5)?-5:0) +
-                                                     ($calc.checkForCommonGroup($event1,$event3,$event5)?-5:0) +
-                                                     ($calc.checkForCommonGroup($event1,$event4,$event5)?-5:0));
-end
-
-rule "notFirstAndLastForStudents"
-    when
-        Event(day != null, timeSlot != null, $day1 : day, unique1 : uniqueId, timeSlot == 0, $groups1 : getStudyGroups())
-        Event(day != null, timeSlot != null, day == $day1, timeSlot == 5, uniqueId != unique1, $groups2 : getStudyGroups())
-        $group1 : StudyGroup($cohort1 : cohortId, $specialcat1 : specialCatId, $special1 : specialId) from $groups1
-        StudyGroup((cohortId == $cohort1 && specialCatId != $specialcat1) || specialId == $special1) from $groups2
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext, -20);
-end
-
 */
+
+
+rule "noGaps"
+    when
+        $event1 : Event(day != null, timeSlot != null, $day1 : day, $timeSlot1: timeSlot, $uniqueId1 : uniqueId, $groupList1 : getStudyGroups())
+        $event2 : Event(day != null, timeSlot != null, $day1 == day, $timeSlot1 + 1 < timeSlot , $timeSlot2 : timeSlot, $groupList2 : getStudyGroups())
+        $event3 : Event(day != null, timeSlot != null, day == $day1, timeSlot > $timeSlot1, timeSlot < $timeSlot2, $groupList3 : getStudyGroups())
+        $group1 : StudyGroup() from $groupList1
+        $group2 : StudyGroup(cohortId == $group1.cohortId, specialCatId == $group1.specialCatId, specialId == $group1.specialId) from $groupList2
+        $filledHoursList : ArrayList(size < $timeSlot2 - $timeSlot1 - 1)
+            from collect (StudyGroup(cohortId == $group1.cohortId, specialCatId == $group1.specialCatId, specialId == $group1.specialId) from $groupList3)
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, -10 * ($timeSlot2-$timeSlot1-1-$filledHoursList.size()));
+end
+
 
