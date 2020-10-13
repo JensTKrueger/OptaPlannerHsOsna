@@ -112,7 +112,7 @@ public class ScoreConstraintTest {
 
     @Test
     public void punishSameEventDifferentRoom(){
-        int factor = -3;
+        int factor = -1;
         Event e1 = new Event(null,null,1,1, null,null,1,null);
         Event e2 = new Event(null,null,2,2, null,null,1,null);
         Event e3 = new Event(null,null,3,3, null,null,2,null);
@@ -150,7 +150,7 @@ public class ScoreConstraintTest {
         int factor = -5;
         Event e1 = new Event(1,1,1,1, null,null,1,null);
         Event e2 = new Event(1,2,3,2, null,null,2,null);
-        Event e3 = new Event(2,2,3,2, null,null,3,null);
+        Event e3 = new Event(2,2,3,3, null,null,3,null);
         e1.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1),new StudyGroup(2,2,2)));
         e2.setStudyGroups(Arrays.asList(new StudyGroup(3,3,1),new StudyGroup(2,2,2)));
         e3.setStudyGroups(Arrays.asList(new StudyGroup(4,4,1)));
@@ -179,6 +179,31 @@ public class ScoreConstraintTest {
         e1.setRoomId(3);
         scoreVerifier.assertSoftWeight("punishMissingRoomFeatures", factor * 3, solution);
 
+    }
+
+    @Test
+    public void noGaps(){
+        int factor = -10;
+        Event e1 = new Event(1,1,null,1, null,null,null,null);
+        Event e2 = new Event(1,2,null,2, null,null,null,null);
+        Event e3 = new Event(1,3,null,3, null,null,null,null);
+        Event e4 = new Event(1,4,null,4, null,null,null,null);
+        e1.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1)));
+        e2.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1)));
+        e3.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1)));
+        e4.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1)));
+
+        CourseSchedule solution = new CourseSchedule();
+
+        solution.setEventList(Arrays.asList(e1, e2, e3, e4));
+        fillCourseScheduleWithTestFacts(solution);
+        System.out.println("===========================");
+        scoreVerifier.assertSoftWeight("noGaps", factor * 0, solution);
+        System.out.println("===========================");
+
+
+        //e3.setDay(2);
+        //scoreVerifier.assertSoftWeight("noGaps", factor * 1, solution);
     }
 
 

@@ -44,6 +44,20 @@ public class StudyGroup {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof StudyGroup){
+            StudyGroup other = (StudyGroup) obj;
+            if(other.cohortId == cohortId && other.specialCatId == specialCatId && other.specialId == specialId){
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
     //this costructor is only used in JUnit tests
     public StudyGroup(int specialId, int specialCatId, int cohortId) {
         this.specialId = specialId;

@@ -87,7 +87,6 @@ rule "placeHardEventsEarly"
         Event(timeSlot != null, hard != null, hard == true, $timeSlot : timeSlot)
     then
     scoreHolder.addSoftConstraintMatch(kcontext, -$timeSlot);
-    System.out.println("HARD FIRED");
 end
 
 
@@ -166,6 +165,12 @@ end
 */
 
 
+
+
+// so ein müll. macht absolut keinen sinn. Das collect zeug guckt garnicht nach stunden dazwischen sondern sucht nach
+//irgendwelchen groups was garnichts bringt und falsche ergebnisse liefert. //todo
+
+
 rule "noGaps"
     when
         $event1 : Event(day != null, timeSlot != null, $day1 : day, $timeSlot1: timeSlot, $uniqueId1 : uniqueId, $groupList1 : getStudyGroups())
@@ -173,10 +178,14 @@ rule "noGaps"
         $event3 : Event(day != null, timeSlot != null, day == $day1, timeSlot > $timeSlot1, timeSlot < $timeSlot2, $groupList3 : getStudyGroups())
         $group1 : StudyGroup() from $groupList1
         $group2 : StudyGroup(cohortId == $group1.cohortId, specialCatId == $group1.specialCatId, specialId == $group1.specialId) from $groupList2
+
+        not Event(day != null, timeSlot != null, day == $day1, timeSlot < $timeSlot1 || timeSlot > $timeSlot2, getStudyGroups() contains $group1 )
+
         $filledHoursList : ArrayList(size < $timeSlot2 - $timeSlot1 - 1)
             from collect (StudyGroup(cohortId == $group1.cohortId, specialCatId == $group1.specialCatId, specialId == $group1.specialId) from $groupList3)
     then
         scoreHolder.addSoftConstraintMatch(kcontext, -10 * ($timeSlot2-$timeSlot1-1-$filledHoursList.size()));
+        System.out.println($timeSlot1 + " " + $timeSlot2 + " " + -10 * ($timeSlot2-$timeSlot1-1-$filledHoursList.size()));
 end
 
 
