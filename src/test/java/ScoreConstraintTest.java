@@ -197,14 +197,21 @@ public class ScoreConstraintTest {
 
         solution.setEventList(Arrays.asList(e1, e2, e3, e4));
         fillCourseScheduleWithTestFacts(solution);
-        System.out.println("===========================");
         scoreVerifier.assertSoftWeight("noGaps", factor * 0, solution);
-        System.out.println("===========================");
+        e3.setDay(2);
+        scoreVerifier.assertSoftWeight("noGaps", factor * 1, solution);
+        e2.setDay(2);
+        scoreVerifier.assertSoftWeight("noGaps", factor * 2, solution);
+        e4.setTimeSlot(5);
+        e3.setTimeSlot(5);
+        scoreVerifier.assertSoftWeight("noGaps", factor * 5, solution);
+        e4.setStudyGroups(Arrays.asList(new StudyGroup(2,2,2)));
+        scoreVerifier.assertSoftWeight("noGaps", factor * 2, solution);
 
-
-        //e3.setDay(2);
-        //scoreVerifier.assertSoftWeight("noGaps", factor * 1, solution);
     }
+
+
+
 
 
 
