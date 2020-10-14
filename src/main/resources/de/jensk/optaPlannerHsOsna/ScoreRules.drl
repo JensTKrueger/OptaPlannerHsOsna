@@ -135,10 +135,6 @@ rule "2HPM"
 end
 
 
-
-
-
-
 rule "noGaps"
     when
         $event1 : Event(day != null, timeSlot != null, $day1 : day, $timeSlot1: timeSlot, $uniqueId1 : uniqueId, $groupList1 : getStudyGroups())
@@ -155,6 +151,10 @@ rule "noGaps"
         scoreHolder.addSoftConstraintMatch(kcontext, -10 * ($timeSlot2-$timeSlot1-1-$filledHoursList.size()));
 end
 
+rule "maxHoursPerDay"
+    when
+        $event1 : Event(day != null, timeSlot != null, $day1 : day, $timeSlot1: timeSlot, $uniqueId1 : uniqueId, $groupList1 : getStudyGroups())
+    then
 
-
+end
 
