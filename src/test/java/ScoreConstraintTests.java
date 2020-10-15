@@ -210,7 +210,7 @@ public class ScoreConstraintTests {
     }
 
     @Test
-    public void testMaxHours(){
+    public void testMinMaxHours(){
         int factor = -10;
         Event e1 = new Event(1,null,null,10001, null,null,null ,null);
         Event e2 = new Event(1,null,null,10002, null,null,null,null);
