@@ -5,8 +5,28 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class HoursAccumulationMap {
 
+    private final int cohortId;
     private HashMap<Integer,Integer> specialIdToHours = new HashMap<>();
     private HashMap<Integer,Integer> specialIdToSpecialCatId = new HashMap<>();
+
+    public HoursAccumulationMap(int cohortId) {
+        this.cohortId = cohortId;
+    }
+
+
+    public void addEvent(Event event){
+        event.getStudyGroups().forEach((studyGroup -> {
+            if(studyGroup.getCohortId() == cohortId){
+                addHour(studyGroup.getSpecialCatId(), studyGroup.getSpecialId());
+            }
+        }));
+    }
+
+    public void removeEvent(Event event){
+        event.getStudyGroups().forEach((studyGroup -> {
+                removeHour(studyGroup.getSpecialId());
+        }));
+    }
 
     public void addHour(int specialCatId, int specialId){
         if(specialIdToHours.containsKey(specialId)){
@@ -15,6 +35,21 @@ public class HoursAccumulationMap {
             specialIdToHours.put(specialId, 1);
             specialIdToSpecialCatId.put(specialId, specialCatId);
         }
+    }
+
+    public void removeHour(int specialId){
+        //todo das hinterher aus performancegründen wieder raus. nur drin um bugs auszuschließen
+        if(!specialIdToHours.containsKey(specialId) || !specialIdToSpecialCatId.containsKey(specialId)){
+            throw new RuntimeException("Tried to remove and entity that wasnt in the list.");
+        }
+        int hoursBefore = specialIdToHours.get(specialId);
+        if(hoursBefore == 0){
+            specialIdToHours.remove(specialId);
+            specialIdToSpecialCatId.remove(specialId);
+        } else {
+            specialIdToHours.put(specialId, hoursBefore -1);
+        }
+
     }
 
     public int getMaxHours(){

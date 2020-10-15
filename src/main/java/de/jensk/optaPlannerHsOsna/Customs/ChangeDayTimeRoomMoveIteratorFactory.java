@@ -10,12 +10,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-public class ChangeDayTimeRoomMoveIteratorFactory implements MoveIteratorFactory {
+public class ChangeDayTimeRoomMoveIteratorFactory implements MoveIteratorFactory<Object> {
 
 
 
     @Override
-    public long getSize(ScoreDirector scoreDirector) {
+    public long getSize(ScoreDirector<Object> scoreDirector) {
         long size = ((CourseSchedule)scoreDirector.getWorkingSolution()).getRoomList().size()
                 * ((CourseSchedule)scoreDirector.getWorkingSolution()).getDayList().size()
                 * ((CourseSchedule)scoreDirector.getWorkingSolution()).getTimeSlotList().size()
@@ -25,12 +25,12 @@ public class ChangeDayTimeRoomMoveIteratorFactory implements MoveIteratorFactory
     }
 
     @Override
-    public Iterator<? extends Move> createOriginalMoveIterator(ScoreDirector scoreDirector) {
+    public Iterator<? extends Move<Object>> createOriginalMoveIterator(ScoreDirector<Object> scoreDirector) {
         return null;
     }
 
     @Override
-    public Iterator<? extends Move> createRandomMoveIterator(ScoreDirector scoreDirector, Random workingRandom) {
+    public Iterator<? extends Move<Object>> createRandomMoveIterator(ScoreDirector<Object> scoreDirector, Random workingRandom) {
         List<Event> events = ((CourseSchedule)scoreDirector.getWorkingSolution()).getEventList();
         List<Integer> days = ((CourseSchedule)scoreDirector.getWorkingSolution()).getDayList();
         List<Integer> timeSlots = ((CourseSchedule)scoreDirector.getWorkingSolution()).getTimeSlotList();

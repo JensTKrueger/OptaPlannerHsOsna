@@ -49,6 +49,15 @@ public class Event {
     }
 
 
+    public boolean containsCohort(int cohortId){
+        for(StudyGroup studyGroup : studyGroups){
+            if(studyGroup.getCohortId() == cohortId){
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public List<Integer> getTeacherIds() {
         return teacherIds;

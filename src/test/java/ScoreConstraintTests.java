@@ -7,7 +7,7 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 
 
-public class ScoreConstraintTest {
+public class ScoreConstraintTests {
     private HardSoftScoreVerifier<CourseSchedule> scoreVerifier =
             new HardSoftScoreVerifier<> (SolverFactory
                     .createFromXmlResource("de/jensk/optaPlannerHsOsna/solverConfig.xml"));
@@ -207,9 +207,43 @@ public class ScoreConstraintTest {
         scoreVerifier.assertSoftWeight("noGaps", factor * 5, solution);
         e4.setStudyGroups(Arrays.asList(new StudyGroup(2,2,2)));
         scoreVerifier.assertSoftWeight("noGaps", factor * 2, solution);
-
     }
 
+    @Test
+    public void testMaxHours(){
+        int factor = -10;
+        Event e1 = new Event(1,null,null,10001, null,null,null ,null);
+        Event e2 = new Event(1,null,null,10002, null,null,null,null);
+        Event e3 = new Event(1,null,null,10003, null,null,null,null);
+        Event e4 = new Event(1,null,null,10004, null,null,null,null);
+        Event e5 = new Event(1,null,null,10005, null,null,null,null);
+        Event e6 = new Event(1,null,null,10006, null,null,null,null);
+
+        e1.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1)));
+        e2.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1)));
+        e3.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1)));
+        e4.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1)));
+        e5.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1)));
+        e6.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1)));
+
+        CourseSchedule solution = new CourseSchedule();
+
+        solution.setEventList(Arrays.asList(e1, e2, e3, e4, e5 ,e6));
+        fillCourseScheduleWithTestFacts(solution);
+        scoreVerifier.assertSoftWeight("maxHoursPerDay", factor * 2, solution);
+        e6.setDay(2);
+        scoreVerifier.assertSoftWeight("maxHoursPerDay", factor * 2, solution);
+        e5.setDay(3);
+        scoreVerifier.assertSoftWeight("maxHoursPerDay", factor * 2, solution);
+        e5.setDay(2);
+        scoreVerifier.assertSoftWeight("maxHoursPerDay", factor * 0, solution);
+        e1.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1),new StudyGroup(2,2,2)));
+        scoreVerifier.assertSoftWeight("maxHoursPerDay", factor * 4, solution);
+        e2.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1),new StudyGroup(3,3,2)));
+        scoreVerifier.assertSoftWeight("maxHoursPerDay", factor * 3, solution);
+        e2.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1),new StudyGroup(3,3,2),new StudyGroup(4,3,2)));
+        scoreVerifier.assertSoftWeight("maxHoursPerDay", factor * 3, solution);
+    }
 
 
 
@@ -243,6 +277,13 @@ public class ScoreConstraintTest {
         roomMap.putFeature(2,1);
         roomMap.putFeature(2,2);
         solution.setRoomMap(roomMap);
+        MinMaxHoursMap minMaxHoursMap = new MinMaxHoursMap();
+        minMaxHoursMap.setMaxHoursOfCohort(1,4);
+        minMaxHoursMap.setMinHoursOfCohort(1,2);
+        minMaxHoursMap.setMaxHoursOfCohort(2,5);
+        minMaxHoursMap.setMinHoursOfCohort(2,5);
+        solution.setMinMaxHoursMap(minMaxHoursMap);
+
     }
 
 }

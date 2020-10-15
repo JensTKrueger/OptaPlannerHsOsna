@@ -7,7 +7,7 @@ public class CommonTests {
 
     @Test
     public void testHoursAccumulationMapMax(){
-        HoursAccumulationMap map = new HoursAccumulationMap();
+        HoursAccumulationMap map = new HoursAccumulationMap(1);
         map.addHour(1,1);
         map.addHour(2,2);
         map.addHour(3,3);
@@ -26,7 +26,7 @@ public class CommonTests {
 
     @Test
     public void testHoursAccumulationMapMin(){
-        HoursAccumulationMap map = new HoursAccumulationMap();
+        HoursAccumulationMap map = new HoursAccumulationMap(1);
         map.addHour(1,1);
         map.addHour(2,2);
         map.addHour(3,3);
