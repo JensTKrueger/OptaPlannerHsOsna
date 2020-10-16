@@ -167,6 +167,23 @@ public class DbConnector {
         return result;
     }
 
+    public static StudentLoadMap getStudentLoadMap(){
+        StudentLoadMap studentLoadMap = new StudentLoadMap();
+        try {
+            if(con == null || con.isClosed()) connectToDb();
+            String query = "SELECT * FROM cohort;";
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while(rs.next()){
+                studentLoadMap.setMinHoursOfCohort(rs.getInt("id"), rs.getInt("min_hours"));
+                studentLoadMap.setMaxHoursOfCohort(rs.getInt("id"), rs.getInt("max_hours"));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return studentLoadMap;
+    }
+
 
     public static void writeResultsToDb(CourseSchedule courseSchedule){
         try {

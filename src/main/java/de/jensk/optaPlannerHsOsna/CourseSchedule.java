@@ -19,7 +19,7 @@ public class CourseSchedule {
     private TimePreferenceMap timePreferenceMap;
     private CustomScoreMethodHolder customScoreMethodHolder;
     private List<List<StudyGroup>> allPossibleGroupCombinations;
-    private MinMaxHoursMap minMaxHoursMap;
+    private StudentLoadMap studentLoadMap;
 
 
     public CourseSchedule(){
@@ -53,12 +53,12 @@ public class CourseSchedule {
     }
 
     @ProblemFactProperty
-    public MinMaxHoursMap getMinMaxHoursMap() {
-        return minMaxHoursMap;
+    public StudentLoadMap getStudentLoadMap() {
+        return studentLoadMap;
     }
 
-    public void setMinMaxHoursMap(MinMaxHoursMap minMaxHoursMap) {
-        this.minMaxHoursMap = minMaxHoursMap;
+    public void setStudentLoadMap(StudentLoadMap studentLoadMap) {
+        this.studentLoadMap = studentLoadMap;
     }
 
     @ProblemFactProperty

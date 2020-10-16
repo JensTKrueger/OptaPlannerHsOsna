@@ -277,12 +277,12 @@ public class ScoreConstraintTests {
         roomMap.putFeature(2,1);
         roomMap.putFeature(2,2);
         solution.setRoomMap(roomMap);
-        MinMaxHoursMap minMaxHoursMap = new MinMaxHoursMap();
-        minMaxHoursMap.setMaxHoursOfCohort(1,4);
-        minMaxHoursMap.setMinHoursOfCohort(1,2);
-        minMaxHoursMap.setMaxHoursOfCohort(2,5);
-        minMaxHoursMap.setMinHoursOfCohort(2,5);
-        solution.setMinMaxHoursMap(minMaxHoursMap);
+        StudentLoadMap studentLoadMap = new StudentLoadMap();
+        studentLoadMap.setMaxHoursOfCohort(1,4);
+        studentLoadMap.setMinHoursOfCohort(1,2);
+        studentLoadMap.setMaxHoursOfCohort(2,5);
+        studentLoadMap.setMinHoursOfCohort(2,5);
+        solution.setStudentLoadMap(studentLoadMap);
 
     }
 

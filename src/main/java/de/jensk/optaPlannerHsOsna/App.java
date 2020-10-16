@@ -29,6 +29,7 @@ public class App {
         unsolvedSchedule.setEventList(DbConnector.getEventList());
         unsolvedSchedule.setTimePreferenceMap(DbConnector.getTimePreferenceMap());
         unsolvedSchedule.setRoomMap(DbConnector.getRoomMap());
+        unsolvedSchedule.setStudentLoadMap(DbConnector.getStudentLoadMap());
         unsolvedSchedule.setCustomScoreMethodHolder(new CustomScoreMethodHolder());
         SolverFactory<CourseSchedule> solverFactory = SolverFactory
                 .createFromXmlResource("de/jensk/optaPlannerHsOsna/solverConfig.xml");

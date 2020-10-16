@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-public class ChangeDayTimeRoomMoveIteratorFactory implements MoveIteratorFactory<Object> {
+public class ChangeFullEventMoveIteratorFactory implements MoveIteratorFactory<Object> {
 
 
 
@@ -35,22 +35,28 @@ public class ChangeDayTimeRoomMoveIteratorFactory implements MoveIteratorFactory
         List<Integer> days = ((CourseSchedule)scoreDirector.getWorkingSolution()).getDayList();
         List<Integer> timeSlots = ((CourseSchedule)scoreDirector.getWorkingSolution()).getTimeSlotList();
         List<Integer> rooms = ((CourseSchedule)scoreDirector.getWorkingSolution()).getRoomList();
-        int eventSize = events.size();
-        int daySize = days.size();
-        int timeSlotSize = timeSlots.size();
-        int roomSize = rooms.size();
 
-        class CustomIterator implements Iterator {
+
+        class ChangeFullEventMoveIterator implements Iterator {
             List<Event> events;
             List<Integer> days;
             List<Integer> timeSlots;
             List<Integer> rooms;
+            int eventSize;
+            int daySize;
+            int timeSlotSize;
+            int roomSize;
 
             public void setProblemFacts(List<Event> events, List<Integer> days,  List<Integer> timeSlots, List<Integer> rooms, Random workingRandom ){
                 this.events = events;
                 this.days = days;
                 this.timeSlots = timeSlots;
                 this.rooms = rooms;
+
+                eventSize = events.size();
+                daySize = days.size();
+                timeSlotSize = timeSlots.size();
+                roomSize = rooms.size();
             }
 
             @Override
@@ -64,13 +70,13 @@ public class ChangeDayTimeRoomMoveIteratorFactory implements MoveIteratorFactory
                 int dayNr = workingRandom.nextInt(daySize);
                 int timeSlotNr = workingRandom.nextInt(timeSlotSize);
                 int roomNr = workingRandom.nextInt(roomSize);
-                return new ChangeDayTimeRoomMove(events.get(eventNr),
+                return new ChangeFullEventMove(events.get(eventNr),
                         days.get(dayNr),
                         timeSlots.get(timeSlotNr),
                         rooms.get(roomNr));
             }
         }
-        CustomIterator iterator = new CustomIterator();
+        ChangeFullEventMoveIterator iterator = new ChangeFullEventMoveIterator();
         iterator.setProblemFacts(events,days,timeSlots,rooms, workingRandom);
         return iterator;
 

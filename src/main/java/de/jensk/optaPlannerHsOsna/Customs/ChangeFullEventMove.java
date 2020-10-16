@@ -8,14 +8,14 @@ import org.optaplanner.core.impl.score.director.ScoreDirector;
 
 import java.util.*;
 
-public class ChangeDayTimeRoomMove extends AbstractMove {
+public class ChangeFullEventMove extends AbstractMove {
 
     private Event event;
     private Integer toDay;
     private Integer toTimeSlot;
     private Integer toRoom;
 
-    public ChangeDayTimeRoomMove(Event event, Integer toDay, Integer toTimeSlot, Integer toRoom) {
+    public ChangeFullEventMove(Event event, Integer toDay, Integer toTimeSlot, Integer toRoom) {
         this.event = event;
         this.toDay = toDay;
         this.toTimeSlot = toTimeSlot;
@@ -24,13 +24,13 @@ public class ChangeDayTimeRoomMove extends AbstractMove {
 
     @Override
     public boolean isMoveDoable(ScoreDirector scoreDirector) {
-        return !toDay.equals(event.getDay()) || !toTimeSlot.equals(event.getTimeSlot()) || !toRoom.equals(event.getRoomId());
+        return true;
     }
 
 
     @Override
-    public ChangeDayTimeRoomMove createUndoMove(ScoreDirector scoreDirector) {
-        ChangeDayTimeRoomMove undoMove = new ChangeDayTimeRoomMove(event, event.getDay(), event.getTimeSlot(), event.getRoomId());
+    public ChangeFullEventMove createUndoMove(ScoreDirector scoreDirector) {
+        ChangeFullEventMove undoMove = new ChangeFullEventMove(event, event.getDay(), event.getTimeSlot(), event.getRoomId());
         return undoMove;
     }
 
@@ -49,8 +49,8 @@ public class ChangeDayTimeRoomMove extends AbstractMove {
 
 
     @Override
-    public ChangeDayTimeRoomMove rebase(ScoreDirector destinationScoreDirector) {
-        return new ChangeDayTimeRoomMove((Event)destinationScoreDirector.lookUpWorkingObject(event),
+    public ChangeFullEventMove rebase(ScoreDirector destinationScoreDirector) {
+        return new ChangeFullEventMove((Event)destinationScoreDirector.lookUpWorkingObject(event),
                 (Integer)destinationScoreDirector.lookUpWorkingObject(toDay), (Integer)destinationScoreDirector.lookUpWorkingObject(toTimeSlot),
                 (Integer)destinationScoreDirector.lookUpWorkingObject(toRoom));
     }
@@ -69,8 +69,8 @@ public class ChangeDayTimeRoomMove extends AbstractMove {
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        } else if (o instanceof ChangeDayTimeRoomMove) {
-            ChangeDayTimeRoomMove other = (ChangeDayTimeRoomMove) o;
+        } else if (o instanceof ChangeFullEventMove) {
+            ChangeFullEventMove other = (ChangeFullEventMove) o;
             return new EqualsBuilder()
                     .append(event, other.event)
                     .append(toDay, other.toDay)

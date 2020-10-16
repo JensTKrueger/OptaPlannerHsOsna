@@ -167,7 +167,7 @@ rule "maxHoursPerDay"
                 action(total.addEvent($event2);),
                 reverse(total.removeEvent($event2);),
                 result(total.getMaxHours()))
-        $minMaxMap : MinMaxHoursMap()
+        $minMaxMap : StudentLoadMap()
     then
         int maxHours = $minMaxMap.getMaxHoursOfCohort($cohort1);
         int minHours = $minMaxMap.getMinHoursOfCohort($cohort1);

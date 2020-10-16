@@ -18,13 +18,13 @@
             <swapMoveSelector>
                 <selectionOrder>RANDOM</selectionOrder>
             </swapMoveSelector>
-            <!--<moveListFactory>
-                <selectionOrder>RANDOM</selectionOrder>
-                <moveListFactoryClass>de.jensk.optaPlannerHsOsna.Customs.ChangeDayTimeRoomMoveFactory</moveListFactoryClass>
-            </moveListFactory>-->
             <moveIteratorFactory>
                 <selectionOrder>RANDOM</selectionOrder>
-                <moveIteratorFactoryClass>de.jensk.optaPlannerHsOsna.Customs.ChangeDayTimeRoomMoveIteratorFactory</moveIteratorFactoryClass>
+                <moveIteratorFactoryClass>de.jensk.optaPlannerHsOsna.Customs.ChangeFullEventMoveIteratorFactory</moveIteratorFactoryClass>
+            </moveIteratorFactory>
+            <moveIteratorFactory>
+                <selectionOrder>RANDOM</selectionOrder>
+                <moveIteratorFactoryClass>de.jensk.optaPlannerHsOsna.Customs.DoubleChangeFullEventMoveIteratorFactory</moveIteratorFactoryClass>
             </moveIteratorFactory>
         </unionMoveSelector>
         <acceptor>
