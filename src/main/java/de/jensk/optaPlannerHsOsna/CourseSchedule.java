@@ -3,12 +3,11 @@ package de.jensk.optaPlannerHsOsna;
 import org.optaplanner.core.api.domain.solution.*;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @PlanningSolution
-public class CourseSchedule {
+public class CourseSchedule{
 
     private List<Integer> roomList;
     private RoomMap roomMap;

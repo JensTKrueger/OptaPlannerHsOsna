@@ -1,73 +1,57 @@
 package de.jensk.optaPlannerHsOsna.CustomMoves;
 
 import de.jensk.optaPlannerHsOsna.CourseSchedule;
-import de.jensk.optaPlannerHsOsna.Event;
 import org.optaplanner.core.impl.heuristic.move.Move;
 import org.optaplanner.core.impl.heuristic.selector.move.factory.MoveIteratorFactory;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
-
 import java.util.Iterator;
-import java.util.List;
 import java.util.Random;
 
-public class ChangeFullEventMoveIteratorFactory implements MoveIteratorFactory<Object> {
+/**
+ * This factory creates the ChangeFullEventMoveIterator.
+ */
+public class ChangeFullEventMoveIteratorFactory
+        implements MoveIteratorFactory<CourseSchedule> {
 
-
-
+    /**
+     * This method calculate an approximation of the amount of possible
+     * moves of the type FullEventMove. It doesnt have to be accurate.
+     * @param scoreDirector The current ScoreDirector.
+     * @return The size approximation.
+     */
     @Override
-    public long getSize(ScoreDirector<Object> scoreDirector) {
-        long size = ((CourseSchedule)scoreDirector.getWorkingSolution()).getRoomList().size()
-                * ((CourseSchedule)scoreDirector.getWorkingSolution()).getDayList().size()
-                * ((CourseSchedule)scoreDirector.getWorkingSolution()).getTimeSlotList().size()
-                * ((CourseSchedule)scoreDirector.getWorkingSolution()).getEventList().size();
-        return size;
+    public long getSize(ScoreDirector<CourseSchedule> scoreDirector) {
+        return scoreDirector.getWorkingSolution().getRoomList().size()
+                * scoreDirector.getWorkingSolution().getDayList().size()
+                * scoreDirector.getWorkingSolution().getTimeSlotList().size()
+                * scoreDirector.getWorkingSolution().getEventList().size();
     }
 
+    /**
+     * This method is only overridden, because the interface demands it. <br>
+     * Do not use this method.<br>
+     * This method is not implemented because the original order is not useful. <br>
+     * Use the random order only.
+     * @param scoreDirector The current Score director.
+     * @return Always null.
+     */
     @Override
-    public Iterator<? extends Move<Object>> createOriginalMoveIterator(ScoreDirector<Object> scoreDirector) {
+    public Iterator<? extends Move<CourseSchedule>> createOriginalMoveIterator(
+            ScoreDirector<CourseSchedule> scoreDirector) {
         return null;
     }
 
+    /**
+     * This method instantiates an Iterator, that can iterate over
+     * all possible ChangeFullEvents in a random order.
+     * @param scoreDirector The current ScoreDirector.
+     * @param workingRandom A generator for Random numbers.
+     * @return The instantiated Iterator.
+     */
     @Override
-    public Iterator<? extends Move<Object>> createRandomMoveIterator(ScoreDirector<Object> scoreDirector, Random workingRandom) {
-        class ChangeFullEventMoveIterator implements Iterator {
-            List<Event> events = ((CourseSchedule)scoreDirector.getWorkingSolution()).getEventList();
-            List<Integer> days = ((CourseSchedule)scoreDirector.getWorkingSolution()).getDayList();
-            List<Integer> timeSlots = ((CourseSchedule)scoreDirector.getWorkingSolution()).getTimeSlotList();
-            List<Integer> rooms = ((CourseSchedule)scoreDirector.getWorkingSolution()).getRoomList();
-            int eventSize;
-            int daySize;
-            int timeSlotSize;
-            int roomSize;
-
-
-
-            ChangeFullEventMoveIterator(){
-                eventSize = events.size();
-                daySize = days.size();
-                timeSlotSize = timeSlots.size();
-                roomSize = rooms.size();
-            }
-
-            @Override
-            public boolean hasNext() {
-                return true;
-            }
-
-            @Override
-            public Object next() {
-                int eventNr = workingRandom.nextInt(eventSize);
-                int dayNr = workingRandom.nextInt(daySize);
-                int timeSlotNr = workingRandom.nextInt(timeSlotSize);
-                int roomNr = workingRandom.nextInt(roomSize);
-                return new ChangeFullEventMove(events.get(eventNr),
-                        days.get(dayNr),
-                        timeSlots.get(timeSlotNr),
-                        rooms.get(roomNr));
-            }
-        }
-        ChangeFullEventMoveIterator iterator = new ChangeFullEventMoveIterator();
-        return iterator;
+    public Iterator<? extends Move<CourseSchedule>> createRandomMoveIterator(
+            ScoreDirector<CourseSchedule> scoreDirector, Random workingRandom) {
+        return new ChangeFullEventMoveIterator(scoreDirector, workingRandom);
 
     }
 }

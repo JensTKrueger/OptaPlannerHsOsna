@@ -1,20 +1,42 @@
 package de.jensk.optaPlannerHsOsna;
 
-import org.optaplanner.core.api.score.ScoreManager;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
 
-import java.util.List;
 
-public class App {
+/**
+ * The class App has the main method which checks for
+ * commands and the start method which solves a schedule.
+ */
+final class App {
 
-    public static void main(String[] args) {
-        while(true){
+    /**
+     * This int value defines how long will be waited before
+     * issuing a new request to the database, whether a
+     * valid command has been written or not. The time
+     * has to be provided in milliseconds.
+     */
+    private static final int TIME_BETWEEN_DATABASE_CHECKS = 5000;
+
+    /**
+     * The starting point of the program. Checks every x (default = 5) Seconds,
+     * whether the command "start_calculation" has been written to the database
+     * and start the schedule generation if it was.
+     * Exits if the command "exit" was written to the database.
+     * @param args This parameter is not used.
+     */
+    public static void main(final String[] args) {
+
+        while (true) {
             try {
-                Thread.sleep(5000);
+
+                Thread.sleep(TIME_BETWEEN_DATABASE_CHECKS);
                 String command = DbConnector.getCommand();
-                if(command != null && command.equals("start_calculation")){
+                if (command != null && command.equals("start_calculation")) {
                     start();
+                }
+                if (command != null && command.equals("exit")) {
+                    System.exit(1);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -22,24 +44,31 @@ public class App {
         }
     }
 
-
-    public static void start(){
+    /**
+     * Everything is loaded from the database and a new CourseSchedule,
+     * containing all the information is created and solved to create
+     * the best fitting solution.
+     */
+    private static void start() {
         CourseSchedule unsolvedSchedule = new CourseSchedule();
         unsolvedSchedule.setRoomList(DbConnector.getRoomIdList());
         unsolvedSchedule.setEventList(DbConnector.getEventList());
-        unsolvedSchedule.setTimePreferenceMap(DbConnector.getTimePreferenceMap());
+        unsolvedSchedule.setTimePreferenceMap(
+                DbConnector.getTimePreferenceMap());
         unsolvedSchedule.setRoomMap(DbConnector.getRoomMap());
         unsolvedSchedule.setStudentLoadMap(DbConnector.getStudentLoadMap());
-        unsolvedSchedule.setCustomScoreMethodHolder(new CustomScoreMethodHolder());
+        unsolvedSchedule.setCustomScoreMethodHolder(
+                new CustomScoreMethodHolder());
         SolverFactory<CourseSchedule> solverFactory = SolverFactory
-                .createFromXmlResource("de/jensk/optaPlannerHsOsna/solverConfig.xml");
-        Solver solver = solverFactory.buildSolver();
-        CourseSchedule solved = (CourseSchedule) solver.solve(unsolvedSchedule);
+                .createFromXmlResource(
+                        "de/jensk/optaPlannerHsOsna/solverConfig.xml");
+        Solver<CourseSchedule> solver = solverFactory.buildSolver();
+        CourseSchedule solved = solver.solve(unsolvedSchedule);
         DbConnector.writeResultsToDb(solved);
-        /*
-        ScoreManager<CourseSchedule> manager = ScoreManager.create(solverFactory);
-        System.out.println(manager.explainScore(solved));
-        */
+    }
 
+    private App() {
+        throw new RuntimeException(
+                "This is the main class and it should not be instantiated.");
     }
 }
