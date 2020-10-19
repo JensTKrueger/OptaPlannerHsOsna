@@ -1,4 +1,4 @@
-package de.jensk.optaPlannerHsOsna.Customs;
+package de.jensk.optaPlannerHsOsna.CustomMoves;
 
 import de.jensk.optaPlannerHsOsna.CourseSchedule;
 import de.jensk.optaPlannerHsOsna.Event;
@@ -20,7 +20,6 @@ public class ChangeFullEventMoveIteratorFactory implements MoveIteratorFactory<O
                 * ((CourseSchedule)scoreDirector.getWorkingSolution()).getDayList().size()
                 * ((CourseSchedule)scoreDirector.getWorkingSolution()).getTimeSlotList().size()
                 * ((CourseSchedule)scoreDirector.getWorkingSolution()).getEventList().size();
-        System.out.println("Size was " + size);
         return size;
     }
 
@@ -31,28 +30,19 @@ public class ChangeFullEventMoveIteratorFactory implements MoveIteratorFactory<O
 
     @Override
     public Iterator<? extends Move<Object>> createRandomMoveIterator(ScoreDirector<Object> scoreDirector, Random workingRandom) {
-        List<Event> events = ((CourseSchedule)scoreDirector.getWorkingSolution()).getEventList();
-        List<Integer> days = ((CourseSchedule)scoreDirector.getWorkingSolution()).getDayList();
-        List<Integer> timeSlots = ((CourseSchedule)scoreDirector.getWorkingSolution()).getTimeSlotList();
-        List<Integer> rooms = ((CourseSchedule)scoreDirector.getWorkingSolution()).getRoomList();
-
-
         class ChangeFullEventMoveIterator implements Iterator {
-            List<Event> events;
-            List<Integer> days;
-            List<Integer> timeSlots;
-            List<Integer> rooms;
+            List<Event> events = ((CourseSchedule)scoreDirector.getWorkingSolution()).getEventList();
+            List<Integer> days = ((CourseSchedule)scoreDirector.getWorkingSolution()).getDayList();
+            List<Integer> timeSlots = ((CourseSchedule)scoreDirector.getWorkingSolution()).getTimeSlotList();
+            List<Integer> rooms = ((CourseSchedule)scoreDirector.getWorkingSolution()).getRoomList();
             int eventSize;
             int daySize;
             int timeSlotSize;
             int roomSize;
 
-            public void setProblemFacts(List<Event> events, List<Integer> days,  List<Integer> timeSlots, List<Integer> rooms, Random workingRandom ){
-                this.events = events;
-                this.days = days;
-                this.timeSlots = timeSlots;
-                this.rooms = rooms;
 
+
+            ChangeFullEventMoveIterator(){
                 eventSize = events.size();
                 daySize = days.size();
                 timeSlotSize = timeSlots.size();
@@ -77,7 +67,6 @@ public class ChangeFullEventMoveIteratorFactory implements MoveIteratorFactory<O
             }
         }
         ChangeFullEventMoveIterator iterator = new ChangeFullEventMoveIterator();
-        iterator.setProblemFacts(events,days,timeSlots,rooms, workingRandom);
         return iterator;
 
     }

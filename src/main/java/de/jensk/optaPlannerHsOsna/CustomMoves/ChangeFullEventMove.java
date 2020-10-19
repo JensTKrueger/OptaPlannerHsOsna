@@ -1,4 +1,4 @@
-package de.jensk.optaPlannerHsOsna.Customs;
+package de.jensk.optaPlannerHsOsna.CustomMoves;
 
 import de.jensk.optaPlannerHsOsna.Event;
 import org.apache.commons.lang3.builder.EqualsBuilder;

@@ -1,4 +1,4 @@
-package de.jensk.optaPlannerHsOsna.Customs;
+package de.jensk.optaPlannerHsOsna.CustomMoves;
 
 import de.jensk.optaPlannerHsOsna.CourseSchedule;
 import de.jensk.optaPlannerHsOsna.Event;
@@ -8,11 +8,13 @@ import org.optaplanner.core.impl.score.director.ScoreDirector;
 
 import java.util.*;
 
-public class DoubleChangeFullEventMoveIteratorFactory implements MoveIteratorFactory<Object>{
+public class DoubleSwapFullEventMoveIteratorFactory implements MoveIteratorFactory<Object> {
 
     @Override
     public long getSize(ScoreDirector<Object> scoreDirector) {
-        return 0;
+        long size = ((CourseSchedule)scoreDirector.getWorkingSolution()).getEventList().size() *
+                ((CourseSchedule)scoreDirector.getWorkingSolution()).getEventList().size();
+        return size;
     }
 
     @Override
@@ -20,27 +22,15 @@ public class DoubleChangeFullEventMoveIteratorFactory implements MoveIteratorFac
         return null;
     }
 
-    @Override
     public Iterator<? extends Move<Object>> createRandomMoveIterator(ScoreDirector<Object> scoreDirector, Random workingRandom) {
-        List<Event> events = ((CourseSchedule)scoreDirector.getWorkingSolution()).getEventList();
-        List<Integer> days = ((CourseSchedule)scoreDirector.getWorkingSolution()).getDayList();
-        List<Integer> timeSlots = ((CourseSchedule)scoreDirector.getWorkingSolution()).getTimeSlotList();
-        List<Integer> rooms = ((CourseSchedule)scoreDirector.getWorkingSolution()).getRoomList();
-
-
-        class DoubleChangeFullEventMoveInterator implements Iterator {
+        class DoubleSwapFullEventMoveIterator implements Iterator {
             List<Event> eventsWithMinTwoHpw;
-            List<Integer> days;
-            List<Integer> timeSlots;
-            List<Integer> rooms;
             HashMap<Integer, List<Event>> allEventsById;
-
-            int daySize;
-            int timeSlotSize;
-            int roomSize;
             int eventsWithMinTwoHpwSize;
 
-            public void setProblemFacts(List<Event> events, List<Integer> days, List<Integer> timeSlots, List<Integer> rooms, Random workingRandom) {
+            DoubleSwapFullEventMoveIterator() {
+                List<Event> events = ((CourseSchedule)scoreDirector.getWorkingSolution()).getEventList();
+
                 eventsWithMinTwoHpw = new ArrayList<>();
                 allEventsById = new HashMap<>();
                 events.forEach((event -> {
@@ -52,15 +42,7 @@ public class DoubleChangeFullEventMoveIteratorFactory implements MoveIteratorFac
                         allEventsById.get(event.getId()).add(event);
                     }
                 }));
-                this.days = days;
-                this.timeSlots = timeSlots;
-                this.rooms = rooms;
-
-                daySize = days.size();
-                timeSlotSize = timeSlots.size();
-                roomSize = rooms.size();
                 eventsWithMinTwoHpwSize = eventsWithMinTwoHpw.size();
-
             }
 
             @Override
@@ -70,11 +52,6 @@ public class DoubleChangeFullEventMoveIteratorFactory implements MoveIteratorFac
 
             @Override
             public Object next() {
-                int dayNr = workingRandom.nextInt(daySize);
-                int timeSlotNr = workingRandom.nextInt(timeSlotSize);
-                int roomNr1 = workingRandom.nextInt(roomSize);
-                int roomNr2 = workingRandom.nextInt(roomSize);
-
                 int eventNr1 = workingRandom.nextInt(eventsWithMinTwoHpwSize);
                 Event event1 = eventsWithMinTwoHpw.get(eventNr1);
                 Event event2 = null;
@@ -83,20 +60,26 @@ public class DoubleChangeFullEventMoveIteratorFactory implements MoveIteratorFac
                     int eventNr2 = workingRandom.nextInt(eventsWithSameId.size());
                     event2 = eventsWithSameId.get(eventNr2);
                 }
-
-                int roomId1 = rooms.get(roomNr1);
-                int roomId2 = rooms.get(roomNr2);
-                int day = days.get(dayNr);
-                int timeSlot1 = timeSlots.get(timeSlotNr);
-                int timeSlot2 = timeSlot1 == timeSlots.size() - 1 ? timeSlot1 - 1 : timeSlot1 + 1;
-                return new DoubleChangeFullEventMove(event1, event2, day, day, timeSlot1, timeSlot2, roomId1, roomId2);
+                int eventNr3 = workingRandom.nextInt(eventsWithMinTwoHpwSize);
+                Event event3 = eventsWithMinTwoHpw.get(eventNr3);
+                Event event4 = null;
+                eventsWithSameId = allEventsById.get(event3.getId());
+                while(event4 == null || event4.getUniqueId().equals(event3.getUniqueId())){
+                    int eventNr4 = workingRandom.nextInt(eventsWithSameId.size());
+                    event4 = eventsWithSameId.get(eventNr4);
+                }
+                boolean keepRooms = workingRandom.nextBoolean();
+                DoubleSwapFullEventMove doubleSwapFullEventMove = new DoubleSwapFullEventMove(event1, event2, event3, event4,
+                        event3.getDay(), event4.getDay(), event1.getDay(), event2.getDay(),
+                        event3.getTimeSlot(), event4.getTimeSlot(), event1.getTimeSlot(), event4.getTimeSlot(),
+                        keepRooms ? event1.getRoomId() : event3.getRoomId(), keepRooms ? event2.getRoomId() : event4.getRoomId(),
+                        keepRooms ? event3.getRoomId() : event1.getRoomId(), keepRooms ? event4.getRoomId() : event2.getRoomId()
+                        );
+                return doubleSwapFullEventMove;
             }
         }
-        DoubleChangeFullEventMoveInterator iterator = new DoubleChangeFullEventMoveInterator();
-        iterator.setProblemFacts(events,days,timeSlots,rooms, workingRandom);
+        DoubleSwapFullEventMoveIterator iterator = new DoubleSwapFullEventMoveIterator();
         return iterator;
     }
-
-
 
 }

@@ -20,11 +20,19 @@
             </swapMoveSelector>
             <moveIteratorFactory>
                 <selectionOrder>RANDOM</selectionOrder>
-                <moveIteratorFactoryClass>de.jensk.optaPlannerHsOsna.Customs.ChangeFullEventMoveIteratorFactory</moveIteratorFactoryClass>
+                <moveIteratorFactoryClass>de.jensk.optaPlannerHsOsna.CustomMoves.ChangeFullEventMoveIteratorFactory</moveIteratorFactoryClass>
             </moveIteratorFactory>
             <moveIteratorFactory>
                 <selectionOrder>RANDOM</selectionOrder>
-                <moveIteratorFactoryClass>de.jensk.optaPlannerHsOsna.Customs.DoubleChangeFullEventMoveIteratorFactory</moveIteratorFactoryClass>
+                <moveIteratorFactoryClass>de.jensk.optaPlannerHsOsna.CustomMoves.DoubleChangeFullEventMoveIteratorFactory</moveIteratorFactoryClass>
+            </moveIteratorFactory>
+            <moveIteratorFactory>
+                <selectionOrder>RANDOM</selectionOrder>
+                <moveIteratorFactoryClass>de.jensk.optaPlannerHsOsna.CustomMoves.SwapFullEventMoveIteratorFactory</moveIteratorFactoryClass>
+            </moveIteratorFactory>
+            <moveIteratorFactory>
+                <selectionOrder>RANDOM</selectionOrder>
+                <moveIteratorFactoryClass>de.jensk.optaPlannerHsOsna.CustomMoves.DoubleSwapFullEventMoveIteratorFactory</moveIteratorFactoryClass>
             </moveIteratorFactory>
         </unionMoveSelector>
         <acceptor>

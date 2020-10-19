@@ -1,4 +1,4 @@
-package de.jensk.optaPlannerHsOsna.Customs;
+package de.jensk.optaPlannerHsOsna.CustomMoves;
 
 import de.jensk.optaPlannerHsOsna.Event;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -9,10 +9,7 @@ import org.optaplanner.core.impl.score.director.ScoreDirector;
 import java.util.Arrays;
 import java.util.Collection;
 
-/**
- * This Move can be performed with the Event entities with the same id.
- */
-public class DoubleChangeFullEventMove extends AbstractMove {
+public class SwapFullEventMove extends AbstractMove {
 
     private Event event1;
     private Event event2;
@@ -23,7 +20,7 @@ public class DoubleChangeFullEventMove extends AbstractMove {
     private Integer toRoom1;
     private Integer toRoom2;
 
-    public DoubleChangeFullEventMove(Event event1, Event event2, Integer toDay1, Integer toDay2, Integer toTimeSlot1, Integer toTimeSlot2, Integer toRoom1, Integer toRoom2) {
+    public SwapFullEventMove(Event event1, Event event2, Integer toDay1, Integer toDay2, Integer toTimeSlot1, Integer toTimeSlot2, Integer toRoom1, Integer toRoom2) {
         this.event1 = event1;
         this.event2 = event2;
         this.toDay1 = toDay1;
@@ -34,18 +31,10 @@ public class DoubleChangeFullEventMove extends AbstractMove {
         this.toRoom2 = toRoom2;
     }
 
-    /**
-     * @param scoreDirector
-     * @return Returns true if both events have the game id.
-     */
-    @Override
-    public boolean isMoveDoable(ScoreDirector scoreDirector) {
-        return event1.getId() == event2.getId();
-    }
 
     @Override
-    protected AbstractMove createUndoMove(ScoreDirector scoreDirector) {
-        return new DoubleChangeFullEventMove(event1, event2, event1.getDay(), event2.getDay(), event1.getTimeSlot(), event2.getTimeSlot(), event1.getRoomId(), event2.getRoomId());
+    public boolean isMoveDoable(ScoreDirector scoreDirector) {
+        return true;
     }
 
     @Override
@@ -71,14 +60,20 @@ public class DoubleChangeFullEventMove extends AbstractMove {
     }
 
     @Override
-    public DoubleChangeFullEventMove rebase(ScoreDirector destinationScoreDirector) {
-        return new DoubleChangeFullEventMove(
+    public SwapFullEventMove createUndoMove(ScoreDirector scoreDirector) {
+        SwapFullEventMove swapFullEventMove = new SwapFullEventMove(event1, event2, event1.getDay(), event2.getDay(),
+                event1.getTimeSlot(), event2.getTimeSlot(), event1.getRoomId(), event2.getRoomId());
+        return swapFullEventMove;
+    }
+
+    @Override
+    public SwapFullEventMove rebase(ScoreDirector destinationScoreDirector) {
+        return new SwapFullEventMove(
                 (Event)destinationScoreDirector.lookUpWorkingObject(event1),(Event)destinationScoreDirector.lookUpWorkingObject(event2),
                 (Integer)destinationScoreDirector.lookUpWorkingObject(toDay1), (Integer)destinationScoreDirector.lookUpWorkingObject(toDay2),
                 (Integer)destinationScoreDirector.lookUpWorkingObject(toTimeSlot1), (Integer)destinationScoreDirector.lookUpWorkingObject(toTimeSlot2),
                 (Integer)destinationScoreDirector.lookUpWorkingObject(toRoom1),(Integer)destinationScoreDirector.lookUpWorkingObject(toRoom2));
     }
-
 
     @Override
     public Collection<?> getPlanningEntities() {
@@ -94,8 +89,8 @@ public class DoubleChangeFullEventMove extends AbstractMove {
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        } else if (o instanceof DoubleChangeFullEventMove) {
-            DoubleChangeFullEventMove other = (DoubleChangeFullEventMove) o;
+        } else if (o instanceof SwapFullEventMove) {
+            SwapFullEventMove other = (SwapFullEventMove) o;
             return new EqualsBuilder()
                     .append(event1, other.event1)
                     .append(event2, other.event2)
@@ -124,6 +119,4 @@ public class DoubleChangeFullEventMove extends AbstractMove {
                 .append(toRoom2)
                 .toHashCode();
     }
-
-
 }
