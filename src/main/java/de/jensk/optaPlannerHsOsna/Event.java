@@ -139,7 +139,7 @@ public class Event {
     }
 
     /**
-     * The @PlanningVariable indicates that the day is one the variables,
+     * The @PlanningVariable indicates that the day is one of the variables,
      * that will be changed during the process of solving. <br>
      * The valueRangeProviderRefs means that the solution class,
      * in this case the CourseSchedule class, has a method which will return all existing days.

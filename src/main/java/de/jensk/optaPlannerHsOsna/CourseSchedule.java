@@ -23,13 +23,13 @@ public class CourseSchedule {
      * Determines how many days per week should be used in the
      * generation of the schedule.
      */
-    private static final int DAYS_PER_WEEK = 5;
+    public static final int DAYS_PER_WEEK = 5;
 
     /**
      * Determines how many timeslots per day should be used in the
      * generation of the schedule.
      */
-    private static final int TIMESLOTS_PER_DAY = 6;
+    public static final int TIMESLOTS_PER_DAY = 6;
 
     /**
      * Contains all existing rooms.
