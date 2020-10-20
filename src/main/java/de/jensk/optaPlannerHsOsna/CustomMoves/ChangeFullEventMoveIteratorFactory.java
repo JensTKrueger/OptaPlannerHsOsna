@@ -15,7 +15,7 @@ public class ChangeFullEventMoveIteratorFactory
 
     /**
      * This method calculate an approximation of the amount of possible
-     * moves of the type FullEventMove. It doesnt have to be accurate.
+     * moves of the type ChangeFullEventMove. It doesnt have to be accurate.
      * @param scoreDirector The current ScoreDirector.
      * @return The size approximation.
      */

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+//TODO DAS GANZE UMSCHREIBEN: IST NICHT EFFIZIENTER ALS EINE EINZIGE HASHMAP
 public class RoomMap {
     private HashMap<Integer,Integer> capacityMap;
     private HashMap<Integer,Integer> buildingIdMap;

@@ -16,7 +16,7 @@ public class DoubleChangeFullEventMoveIteratorFactory
 
     /**
      * This method calculate an approximation of the amount of possible
-     * moves of the type FullEventMove. It doesnt have to be accurate.
+     * moves of the type DoubleChangeEventMove. It doesnt have to be accurate.
      * @param scoreDirector The current ScoreDirector.
      * @return The size approximation.
      */

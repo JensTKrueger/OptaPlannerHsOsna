@@ -18,27 +18,27 @@ public class ChangeFullEventMoveIterator implements Iterator<Move<CourseSchedule
     /**
      * A list of all existing events.
      */
-    private List<Event> events;
+    private final List<Event> events;
 
     /**
      * A list of all existing days.
      */
-    private List<Integer> days;
+    private final List<Integer> days;
 
     /**
      * A list of all existing timeslots.
      */
-    private List<Integer> timeSlots;
+    private final List<Integer> timeSlots;
 
     /**
      * A list of all existing room.
      */
-    private List<Integer> rooms;
+    private final List<Integer> rooms;
 
     /**
      * A generator for random numbers.
      */
-    private Random workingRandom;
+    private final Random workingRandom;
 
 
     /**
@@ -46,7 +46,7 @@ public class ChangeFullEventMoveIterator implements Iterator<Move<CourseSchedule
      * @param scoreDirector The current ScoreDirector.
      * @param workingRandom An instance of the Random class to generator random numbers.
      */
-    public ChangeFullEventMoveIterator(
+    ChangeFullEventMoveIterator(
             ScoreDirector<CourseSchedule> scoreDirector, Random workingRandom) {
         events = scoreDirector.getWorkingSolution().getEventList();
         days = scoreDirector.getWorkingSolution().getDayList();

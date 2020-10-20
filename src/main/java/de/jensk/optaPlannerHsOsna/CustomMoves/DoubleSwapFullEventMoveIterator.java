@@ -4,6 +4,7 @@ import de.jensk.optaPlannerHsOsna.CourseSchedule;
 import de.jensk.optaPlannerHsOsna.Event;
 import org.optaplanner.core.impl.heuristic.move.Move;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -12,31 +13,11 @@ import java.util.ArrayList;
 
 
 /**
- * This class iterates over possible DoubleChangeFullEventMoves in a RANDOM order.<br>
+ * This class iterates over possible DoubleSwapFullEventMoves in a RANDOM order.<br>
  * It should never be instantiated using the new-Keyword.<br>
- * Use the DoubleChangeFullEventMoveIteratorFactory to do so.
+ * Use the DoubleSwapFullEventMoveIteratorFactory to do so.
  */
-public class DoubleChangeFullEventMoveIterator implements Iterator<Move<CourseSchedule>> {
-
-    /**
-     * A list of all existing days.
-     */
-    private final List<Integer> days;
-
-    /**
-     * A list of all existing timeslots.
-     */
-    private final List<Integer> timeSlots;
-
-    /**
-     * A list of all existing room.
-     */
-    private final List<Integer> rooms;
-
-    /**
-     * A generator for random numbers.
-     */
-    private final Random workingRandom;
+public class DoubleSwapFullEventMoveIterator implements Iterator<Move<CourseSchedule>> {
 
     /**
      * A list of all events which have a minimum of two hours per week.
@@ -51,19 +32,19 @@ public class DoubleChangeFullEventMoveIterator implements Iterator<Move<CourseSc
      */
     private final HashMap<Integer, List<Event>> allEventsById;
 
+    /**
+     * A generator for random numbers.
+     */
+    private final Random workingRandom;
 
     /**
-     * Constructor for the DoubleChangeFullEventMoveIterator.
+     * Constructor for the DoubleSwapFullEventMoveIterator.
      * @param scoreDirector The current ScoreDirector.
      * @param workingRandom An instance of the Random class to generator random numbers.
      */
-    DoubleChangeFullEventMoveIterator(
+    public DoubleSwapFullEventMoveIterator(
             ScoreDirector<CourseSchedule> scoreDirector, Random workingRandom) {
         List<Event> events = scoreDirector.getWorkingSolution().getEventList();
-        days = scoreDirector.getWorkingSolution().getDayList();
-        timeSlots = scoreDirector.getWorkingSolution().getTimeSlotList();
-        rooms = scoreDirector.getWorkingSolution().getRoomList();
-
         eventsWithMinTwoHpw = new ArrayList<>();
         allEventsById = new HashMap<>();
         events.forEach((event -> {
@@ -88,20 +69,17 @@ public class DoubleChangeFullEventMoveIterator implements Iterator<Move<CourseSc
     }
 
     /**
-     * Creates a new DoubleChangeFullEventMove. <br>
-     * The events and the values are picked randomly out
-     * of all existing events and values.<br>
-     * Both events will have the same id and the move will place them in the same
-     * day and room and in adjacent timeslots.
+     * Creates a new DoubleSwapFullEventMove. <br>
+     * There are two sets of events, each set containing exactly
+     * two events which have the same id. The first event of the first
+     * set is swapped with the first event of the second set.<br>
+     * The same happens to the second events of each set.<br>
+     * A swap means that the day and timeslot values are swapped.<br>
+     * Additionally there is a 50% chance that the room is swapped too.
      * @return The created DoubleChangeFullEventMove
      */
     @Override
     public Move<CourseSchedule> next() {
-        int dayNr = workingRandom.nextInt(days.size());
-        int timeSlotNr = workingRandom.nextInt(days.size());
-        int roomNr1 = workingRandom.nextInt(rooms.size());
-        int roomNr2 = workingRandom.nextInt(rooms.size());
-
         int eventNr1 = workingRandom.nextInt(eventsWithMinTwoHpw.size());
         Event event1 = eventsWithMinTwoHpw.get(eventNr1);
         Event event2 = null;
@@ -110,13 +88,24 @@ public class DoubleChangeFullEventMoveIterator implements Iterator<Move<CourseSc
             int eventNr2 = workingRandom.nextInt(eventsWithSameId.size());
             event2 = eventsWithSameId.get(eventNr2);
         }
-
-        int roomId1 = rooms.get(roomNr1);
-        int roomId2 = rooms.get(roomNr2);
-        int day = days.get(dayNr);
-        int timeSlot1 = timeSlots.get(timeSlotNr);
-        int timeSlot2 = timeSlot1 == timeSlots.size() - 1 ? timeSlot1 - 1 : timeSlot1 + 1;
-        return new DoubleChangeFullEventMove(event1, event2, day, day,
-                timeSlot1, timeSlot2, roomId1, roomId2);
+        int eventNr3 = workingRandom.nextInt(eventsWithMinTwoHpw.size());
+        Event event3 = eventsWithMinTwoHpw.get(eventNr3);
+        Event event4 = null;
+        eventsWithSameId = allEventsById.get(event3.getId());
+        while (event4 == null || event4.getUniqueId().equals(event3.getUniqueId())) {
+            int eventNr4 = workingRandom.nextInt(eventsWithSameId.size());
+            event4 = eventsWithSameId.get(eventNr4);
+        }
+        boolean keepRooms = workingRandom.nextBoolean();
+        return new DoubleSwapFullEventMove(event1, event2, event3, event4,
+                event3.getDay(), event4.getDay(), event1.getDay(), event2.getDay(),
+                event3.getTimeSlot(), event4.getTimeSlot(),
+                event1.getTimeSlot(), event4.getTimeSlot(),
+                keepRooms ? event1.getRoomId() : event3.getRoomId(),
+                keepRooms ? event2.getRoomId() : event4.getRoomId(),
+                keepRooms ? event3.getRoomId() : event1.getRoomId(),
+                keepRooms ? event4.getRoomId() : event2.getRoomId()
+        );
     }
 }
+

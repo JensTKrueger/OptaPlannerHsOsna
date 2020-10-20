@@ -8,7 +8,7 @@ import org.optaplanner.core.api.solver.SolverFactory;
  * The class App has the main method which checks for
  * commands and the start method which solves a schedule.
  */
-final class App {
+public final class App {
 
     /**
      * This int value defines how long will be waited before
@@ -47,28 +47,23 @@ final class App {
     /**
      * Everything is loaded from the database and a new CourseSchedule,
      * containing all the information is created and solved to create
-     * the best fitting solution.
+     * the best fitting solution. This solution is written to the database afterwards.
      */
     private static void start() {
         CourseSchedule unsolvedSchedule = new CourseSchedule();
         unsolvedSchedule.setRoomList(DbConnector.getRoomIdList());
         unsolvedSchedule.setEventList(DbConnector.getEventList());
-        unsolvedSchedule.setTimePreferenceMap(
-                DbConnector.getTimePreferenceMap());
+        unsolvedSchedule.setTimePreferenceMap(DbConnector.getTimePreferenceMap());
         unsolvedSchedule.setRoomMap(DbConnector.getRoomMap());
         unsolvedSchedule.setStudentLoadMap(DbConnector.getStudentLoadMap());
-        unsolvedSchedule.setCustomScoreMethodHolder(
-                new CustomScoreMethodHolder());
-        SolverFactory<CourseSchedule> solverFactory = SolverFactory
-                .createFromXmlResource(
+        SolverFactory<CourseSchedule> solverFactory = SolverFactory.createFromXmlResource(
                         "de/jensk/optaPlannerHsOsna/solverConfig.xml");
         Solver<CourseSchedule> solver = solverFactory.buildSolver();
-        CourseSchedule solved = solver.solve(unsolvedSchedule);
-        DbConnector.writeResultsToDb(solved);
+        CourseSchedule solvedSchedule = solver.solve(unsolvedSchedule);
+        DbConnector.writeResultsToDb(solvedSchedule);
     }
 
     private App() {
-        throw new RuntimeException(
-                "This is the main class and it should not be instantiated.");
+        throw new RuntimeException("This is the main class and it should not be instantiated.");
     }
 }
