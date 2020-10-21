@@ -236,7 +236,7 @@ public class Event {
      * This constructor is only used for testing.
      */
     public Event(Integer day, Integer timeSlot, Integer roomId, Integer uniqueId,
-                 List<Integer> teacherIds, Integer groupSize, Integer id, Boolean hard) {
+                 List<Integer> teacherIds, Integer groupSize, Integer id, Boolean hard, Integer hpm) {
         this.day = day;
         this.timeSlot = timeSlot;
         this.roomId = roomId;
@@ -245,6 +245,7 @@ public class Event {
         this.groupSize = groupSize;
         this.id = id;
         this.hard = hard;
+        this.hpm = hpm;
     }
 
 

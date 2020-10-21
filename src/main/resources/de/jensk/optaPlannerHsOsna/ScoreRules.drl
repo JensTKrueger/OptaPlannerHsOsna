@@ -113,26 +113,33 @@ rule "punishMissingRoomFeatures"
      scoreHolder.addSoftConstraintMatch(kcontext, -10);
 end
 
-
-
-
-rule "2HPM1"
+rule "punishOneHpmDifferences"
     when
-        Event(hpm == 2, day != null, timeSlot != null, $leftDay : day, $timeSlot1: timeSlot, $leftId : id, $unique1 : uniqueId)
-        Event(hpm == 2, day != null, timeSlot != null, $leftDay == day, $timeSlot1 > 1 + timeSlot, $leftId == id)
-    then
-    scoreHolder.addSoftConstraintMatch(kcontext, -50);
-end
-
-
-rule "2HPM"
-    when
-        Event(hpm == 2, day != null, timeSlot != null, $leftDay : day, $timeSlot1: timeSlot, $leftId : id, $unique1 : uniqueId)
-        ArrayList(size != 2 , $size : size())
+        Event(hpm == 1, day != null, timeSlot != null, $leftDay : day, $timeSlot1: timeSlot, $leftId : id, $leftUniqueId : uniqueId)
+        not Event($leftId == id, $leftDay == day, $leftUniqueId > uniqueId)
+        ArrayList(size != 1 , $size : size())
             from collect (Event(day != null, timeSlot != null, $leftDay == day, $leftId == id))
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -100 * Math.abs( 2 - $size));
+        scoreHolder.addSoftConstraintMatch(kcontext, -10 * ($size - 1));
 end
+
+
+rule "punishTwoHpmDifferences"
+    when
+        Event(hpm == 2, day != null, timeSlot != null, $leftDay : day, $timeSlot1: timeSlot, $leftId : id, $leftUniqueId : uniqueId)
+        not Event(hpm == 2, day != null, timeSlot != null, $leftDay == day, $leftId == id, $leftUniqueId > uniqueId)
+        $eventsOnSameDay : ArrayList()
+            from collect (Event(day != null, timeSlot != null, $leftDay == day, $leftId == id))
+    then
+        if($eventsOnSameDay.size() == 2){
+            if(Math.abs(((Event)$eventsOnSameDay.get(0)).getTimeSlot() - ((Event)$eventsOnSameDay.get(1)).getTimeSlot()) != 1) {
+                scoreHolder.addSoftConstraintMatch(kcontext, -5 );
+            }
+        } else {
+            scoreHolder.addSoftConstraintMatch(kcontext, -10  * Math.abs($eventsOnSameDay.size() - 2));
+        }
+end
+
 
 
 rule "noGaps"
@@ -153,7 +160,7 @@ end
 
 
 //rechnet für jede kohorte die kombination aus, die die meisten stunden hat
-rule "maxHoursPerDay"
+rule "minMaxHoursPerDay"
     when
         $event1 : Event(day != null, $day1 : day, $timeSlot1: timeSlot, $uniqueId1 : uniqueId, $groupList1 : getStudyGroups())
         $group1 : StudyGroup($cohort1 : cohortId) from $groupList1

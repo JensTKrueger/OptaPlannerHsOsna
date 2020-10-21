@@ -15,10 +15,10 @@ public class ScoreConstraintTests {
 
     @Test
     public void oneEventPerRoom(){
-        Event e1 = new Event(1,1,1,1,null,null,null,null);
-        Event e2 = new Event(1,1,1,2,null,null,null,null);
-        Event e3 = new Event(1,1,1,3,null,null,null,null);
-        Event e4 = new Event(1,1,2,4,null,null,null,null);
+        Event e1 = new Event(1,1,1,1,null,null,null,null, null);
+        Event e2 = new Event(1,1,1,2,null,null,null,null, null);
+        Event e3 = new Event(1,1,1,3,null,null,null,null, null);
+        Event e4 = new Event(1,1,2,4,null,null,null,null, null);
         CourseSchedule solution = new CourseSchedule();
         solution.setEventList(Arrays.asList(e1,e2,e3,e4));
         fillCourseScheduleWithTestFacts(solution);
@@ -32,9 +32,9 @@ public class ScoreConstraintTests {
 
     @Test
     public void oneEventPerTeacher(){
-        Event e1 = new Event(1,1,1,1, Arrays.asList(1, 2),null,null,null);
-        Event e2 = new Event(1,1,1,2, Arrays.asList(2, 3),null,null,null);
-        Event e3 = new Event(1,1,1,3, Arrays.asList(1, 3, 4),null,null,null);
+        Event e1 = new Event(1,1,1,1, Arrays.asList(1, 2),null,null,null, null);
+        Event e2 = new Event(1,1,1,2, Arrays.asList(2, 3),null,null,null, null);
+        Event e3 = new Event(1,1,1,3, Arrays.asList(1, 3, 4),null,null,null, null);
         CourseSchedule solution = new CourseSchedule();
         solution.setEventList(Arrays.asList(e1,e2,e3));
         fillCourseScheduleWithTestFacts(solution);
@@ -47,8 +47,8 @@ public class ScoreConstraintTests {
 
     @Test
     public void avoidLockedTimeSlots(){
-        Event e1 = new Event(1,1,null,1, Arrays.asList(1, 2),null,null,null);
-        Event e2 = new Event(1,1,null,2, Arrays.asList(2, 3),null,null,null);
+        Event e1 = new Event(1,1,null,1, Arrays.asList(1, 2),null,null,null, null);
+        Event e2 = new Event(1,1,null,2, Arrays.asList(2, 3),null,null,null, null);
         CourseSchedule solution = new CourseSchedule();
         solution.setEventList(Arrays.asList(e1,e2));
         fillCourseScheduleWithTestFacts(solution);
@@ -63,8 +63,8 @@ public class ScoreConstraintTests {
 
     @Test
     public void oneEventPerGroup(){
-        Event e1 = new Event(1,1,1,1,null,null,null,null);
-        Event e2 = new Event(1,1,1,2,null,null,null,null);
+        Event e1 = new Event(1,1,1,1,null,null,null,null, null);
+        Event e2 = new Event(1,1,1,2,null,null,null,null, null);
         e1.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1),new StudyGroup(2,2,2)));
         e2.setStudyGroups(Arrays.asList(new StudyGroup(3,3,1),new StudyGroup(2,2,2)));
         CourseSchedule solution = new CourseSchedule();
@@ -80,8 +80,8 @@ public class ScoreConstraintTests {
     @Test
     public void rewardPreferredTimeSlots(){
         int factor = 1;
-        Event e1 = new Event(1,3,1,1, Arrays.asList(1, 2),null,null,null);
-        Event e2 = new Event(1,3,1,2, Arrays.asList(2, 3),null,null,null);
+        Event e1 = new Event(1,3,1,1, Arrays.asList(1, 2),null,null,null, null);
+        Event e2 = new Event(1,3,1,2, Arrays.asList(2, 3),null,null,null, null);
         CourseSchedule solution = new CourseSchedule();
         solution.setEventList(Arrays.asList(e1,e2));
         fillCourseScheduleWithTestFacts(solution);
@@ -97,9 +97,9 @@ public class ScoreConstraintTests {
     @Test
     public void avoidTooSmallRooms(){
         int factor = -20;
-        Event e1 = new Event(null,null,3,1, null,60,null,null);
-        Event e2 = new Event(null,null,2,2, null,55,null,null);
-        Event e3 = new Event(null,null,1,3, null,40,null,null);
+        Event e1 = new Event(null,null,3,1, null,60,null,null, null);
+        Event e2 = new Event(null,null,2,2, null,55,null,null, null);
+        Event e3 = new Event(null,null,1,3, null,40,null,null, null);
         CourseSchedule solution = new CourseSchedule();
         solution.setEventList(Arrays.asList(e1, e2, e3));
         fillCourseScheduleWithTestFacts(solution);
@@ -113,9 +113,9 @@ public class ScoreConstraintTests {
     @Test
     public void punishSameEventDifferentRoom(){
         int factor = -1;
-        Event e1 = new Event(null,null,1,1, null,null,1,null);
-        Event e2 = new Event(null,null,2,2, null,null,1,null);
-        Event e3 = new Event(null,null,3,3, null,null,2,null);
+        Event e1 = new Event(null,null,1,1, null,null,1,null, null);
+        Event e2 = new Event(null,null,2,2, null,null,1,null, null);
+        Event e3 = new Event(null,null,3,3, null,null,2,null, null);
         CourseSchedule solution = new CourseSchedule();
         solution.setEventList(Arrays.asList(e1, e2, e3));
         fillCourseScheduleWithTestFacts(solution);
@@ -131,8 +131,8 @@ public class ScoreConstraintTests {
     @Test
     public void placeHardEventsEarly(){
         int factor = -1;
-        Event e1 = new Event(null,0,null,1, null,null,null,false);
-        Event e2 = new Event(null,4,null,2, null,null,null,false);
+        Event e1 = new Event(null,0,null,1, null,null,null,false, null);
+        Event e2 = new Event(null,4,null,2, null,null,null,false, null);
         CourseSchedule solution = new CourseSchedule();
         solution.setEventList(Arrays.asList(e1, e2));
         fillCourseScheduleWithTestFacts(solution);
@@ -148,9 +148,9 @@ public class ScoreConstraintTests {
     @Test
     public void punishBuildingChangeWithoutBreak(){
         int factor = -5;
-        Event e1 = new Event(1,1,1,1, null,null,1,null);
-        Event e2 = new Event(1,2,3,2, null,null,2,null);
-        Event e3 = new Event(2,2,3,3, null,null,3,null);
+        Event e1 = new Event(1,1,1,1, null,null,1,null, null);
+        Event e2 = new Event(1,2,3,2, null,null,2,null, null);
+        Event e3 = new Event(2,2,3,3, null,null,3,null, null);
         e1.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1),new StudyGroup(2,2,2)));
         e2.setStudyGroups(Arrays.asList(new StudyGroup(3,3,1),new StudyGroup(2,2,2)));
         e3.setStudyGroups(Arrays.asList(new StudyGroup(4,4,1)));
@@ -165,8 +165,8 @@ public class ScoreConstraintTests {
     @Test
     public void punishMissingRoomFeatures(){
         int factor = -10;
-        Event e1 = new Event(null,null,1,1, null,null,1,false);
-        Event e2 = new Event(null,null,2,2, null,null,2,false);
+        Event e1 = new Event(null,null,1,1, null,null,1,false, null);
+        Event e2 = new Event(null,null,2,2, null,null,2,false, null);
         e1.setFeatureIds(Arrays.asList(1,2,3));
         e2.setFeatureIds(Arrays.asList(1,2));
         CourseSchedule solution = new CourseSchedule();
@@ -182,12 +182,59 @@ public class ScoreConstraintTests {
     }
 
     @Test
+    public void punishOneHpmDifferences(){
+        int factor = -10;
+        Event e1 = new Event(1,1,null,1, null,null,1,null, 1);
+        Event e2 = new Event(1,2,null,2, null,null,1,null, 1);
+        Event e3 = new Event(1,3,null,3, null,null,1,null, 1);
+        Event e4 = new Event(1,4,null,4, null,null,1,null, 1);
+
+        CourseSchedule solution = new CourseSchedule();
+        solution.setEventList(Arrays.asList(e1, e2, e3, e4));
+        fillCourseScheduleWithTestFacts(solution);
+
+        scoreVerifier.assertSoftWeight("punishOneHpmDifferences", factor * 3, solution);
+        e1.setId(2);
+        scoreVerifier.assertSoftWeight("punishOneHpmDifferences", factor * 2, solution);
+        e2.setDay(5);
+        scoreVerifier.assertSoftWeight("punishOneHpmDifferences", factor * 1, solution);
+        e3.setDay(5);
+        scoreVerifier.assertSoftWeight("punishOneHpmDifferences", factor * 1, solution);
+        e3.setDay(4);
+        scoreVerifier.assertSoftWeight("punishOneHpmDifferences", factor * 0, solution);
+    }
+
+    @Test
+    public void punishTwoHpmDifferences(){
+        int factorNotAdjacent = -5;
+        int factorWrongNumberOfHours = -10;
+        Event e1 = new Event(1,1,null,1, null,null,1,null, 2);
+        Event e2 = new Event(1,2,null,2, null,null,1,null, 2);
+        Event e3 = new Event(1,3,null,3, null,null,1,null, 2);
+        Event e4 = new Event(1,4,null,4, null,null,1,null, 2);
+
+        CourseSchedule solution = new CourseSchedule();
+        solution.setEventList(Arrays.asList(e1, e2, e3, e4));
+        fillCourseScheduleWithTestFacts(solution);
+
+        scoreVerifier.assertSoftWeight("punishTwoHpmDifferences", factorWrongNumberOfHours * 2, solution);
+        e1.setDay(2);
+        scoreVerifier.assertSoftWeight("punishTwoHpmDifferences", factorWrongNumberOfHours * 2, solution);
+        e3.setDay(2);
+        scoreVerifier.assertSoftWeight("punishTwoHpmDifferences", factorNotAdjacent * 2, solution);
+        e1.setTimeSlot(2);
+        scoreVerifier.assertSoftWeight("punishTwoHpmDifferences", factorNotAdjacent * 1, solution);
+        e2.setTimeSlot(3);
+        scoreVerifier.assertSoftWeight("punishTwoHpmDifferences", 0, solution);
+    }
+
+    @Test
     public void noGaps(){
         int factor = -10;
-        Event e1 = new Event(1,1,null,1, null,null,null,null);
-        Event e2 = new Event(1,2,null,2, null,null,null,null);
-        Event e3 = new Event(1,3,null,3, null,null,null,null);
-        Event e4 = new Event(1,4,null,4, null,null,null,null);
+        Event e1 = new Event(1,1,null,1, null,null,null,null, null);
+        Event e2 = new Event(1,2,null,2, null,null,null,null, null);
+        Event e3 = new Event(1,3,null,3, null,null,null,null, null);
+        Event e4 = new Event(1,4,null,4, null,null,null,null, null);
         e1.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1)));
         e2.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1)));
         e3.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1)));
@@ -212,12 +259,12 @@ public class ScoreConstraintTests {
     @Test
     public void testMinMaxHours(){
         int factor = -10;
-        Event e1 = new Event(1,null,null,10001, null,null,null ,null);
-        Event e2 = new Event(1,null,null,10002, null,null,null,null);
-        Event e3 = new Event(1,null,null,10003, null,null,null,null);
-        Event e4 = new Event(1,null,null,10004, null,null,null,null);
-        Event e5 = new Event(1,null,null,10005, null,null,null,null);
-        Event e6 = new Event(1,null,null,10006, null,null,null,null);
+        Event e1 = new Event(1,null,null,1, null,null,null ,null, null);
+        Event e2 = new Event(1,null,null,2, null,null,null,null, null);
+        Event e3 = new Event(1,null,null,3, null,null,null,null, null);
+        Event e4 = new Event(1,null,null,4, null,null,null,null, null);
+        Event e5 = new Event(1,null,null,5, null,null,null,null, null);
+        Event e6 = new Event(1,null,null,6, null,null,null,null, null);
 
         e1.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1)));
         e2.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1)));
@@ -230,19 +277,19 @@ public class ScoreConstraintTests {
 
         solution.setEventList(Arrays.asList(e1, e2, e3, e4, e5 ,e6));
         fillCourseScheduleWithTestFacts(solution);
-        scoreVerifier.assertSoftWeight("maxHoursPerDay", factor * 2, solution);
+        scoreVerifier.assertSoftWeight("minMaxHoursPerDay", factor * 2, solution);
         e6.setDay(2);
-        scoreVerifier.assertSoftWeight("maxHoursPerDay", factor * 2, solution);
+        scoreVerifier.assertSoftWeight("minMaxHoursPerDay", factor * 2, solution);
         e5.setDay(3);
-        scoreVerifier.assertSoftWeight("maxHoursPerDay", factor * 2, solution);
+        scoreVerifier.assertSoftWeight("minMaxHoursPerDay", factor * 2, solution);
         e5.setDay(2);
-        scoreVerifier.assertSoftWeight("maxHoursPerDay", factor * 0, solution);
+        scoreVerifier.assertSoftWeight("minMaxHoursPerDay", factor * 0, solution);
         e1.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1),new StudyGroup(2,2,2)));
-        scoreVerifier.assertSoftWeight("maxHoursPerDay", factor * 4, solution);
+        scoreVerifier.assertSoftWeight("minMaxHoursPerDay", factor * 4, solution);
         e2.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1),new StudyGroup(3,3,2)));
-        scoreVerifier.assertSoftWeight("maxHoursPerDay", factor * 3, solution);
+        scoreVerifier.assertSoftWeight("minMaxHoursPerDay", factor * 3, solution);
         e2.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1),new StudyGroup(3,3,2),new StudyGroup(4,3,2)));
-        scoreVerifier.assertSoftWeight("maxHoursPerDay", factor * 3, solution);
+        scoreVerifier.assertSoftWeight("minMaxHoursPerDay", factor * 3, solution);
     }
 
 
