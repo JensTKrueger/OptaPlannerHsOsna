@@ -26,19 +26,19 @@ public final class App {
      * @param args This parameter is not used.
      */
     public static void main(final String[] args) {
-
+        DbConnector.checkIfDataBaseExistsAndCreateIfNot();
         while (true) {
             try {
-
                 Thread.sleep(TIME_BETWEEN_DATABASE_CHECKS);
                 String command = DbConnector.getCommand();
                 if (command != null && command.equals("start_calculation")) {
                     start();
+                } else if (command != null && command.equals("exit")) {
+                    System.exit(0);
+                } else if (command != null){
+                    throw new RuntimeException("An unknown command has been received: " + command);
                 }
-                if (command != null && command.equals("exit")) {
-                    System.exit(1);
-                }
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

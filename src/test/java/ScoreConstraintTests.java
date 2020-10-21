@@ -257,7 +257,7 @@ public class ScoreConstraintTests {
     }
 
     @Test
-    public void testMinMaxHours(){
+    public void testMaxHours(){
         int factor = -10;
         Event e1 = new Event(1,null,null,1, null,null,null ,null, null);
         Event e2 = new Event(1,null,null,2, null,null,null,null, null);
@@ -288,8 +288,40 @@ public class ScoreConstraintTests {
         scoreVerifier.assertSoftWeight("minMaxHoursPerDay", factor * 4, solution);
         e2.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1),new StudyGroup(3,3,2)));
         scoreVerifier.assertSoftWeight("minMaxHoursPerDay", factor * 3, solution);
-        e2.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1),new StudyGroup(3,3,2),new StudyGroup(4,3,2)));
+        e2.setStudyGroups(Arrays.asList(new StudyGroup(1,1,1),
+                new StudyGroup(3,3,2),
+                new StudyGroup(4,3,2)));
         scoreVerifier.assertSoftWeight("minMaxHoursPerDay", factor * 3, solution);
+    }
+
+    @Test
+    public void testMinHours(){
+        int factor = -10;
+        Event e1 = new Event(1,null,null,1, null,null,null ,null, null);
+        Event e2 = new Event(1,null,null,2, null,null,null,null, null);
+        Event e3 = new Event(1,null,null,3, null,null,null,null, null);
+        Event e4 = new Event(1,null,null,4, null,null,null,null, null);
+        Event e5 = new Event(1,null,null,5, null,null,null,null, null);
+        Event e6 = new Event(1,null,null,6, null,null,null,null, null);
+
+        e1.setStudyGroups(Arrays.asList(new StudyGroup(1,1,2)));
+        e2.setStudyGroups(Arrays.asList(new StudyGroup(1,1,2)));
+        e3.setStudyGroups(Arrays.asList(new StudyGroup(1,1,2)));
+        e4.setStudyGroups(Arrays.asList(new StudyGroup(1,1,2)));
+        e5.setStudyGroups(Arrays.asList(new StudyGroup(1,1,2)));
+        e6.setStudyGroups(Arrays.asList(new StudyGroup(1,1,2)));
+
+        CourseSchedule solution = new CourseSchedule();
+
+        solution.setEventList(Arrays.asList(e1, e2, e3, e4, e5 ,e6));
+        fillCourseScheduleWithTestFacts(solution);
+        scoreVerifier.assertSoftWeight("minMaxHoursPerDay", factor * 1, solution);
+        e6.setDay(2);
+        scoreVerifier.assertSoftWeight("minMaxHoursPerDay", factor * 4, solution);
+        e1.setStudyGroups(Arrays.asList(new StudyGroup(2,2,2)));
+        scoreVerifier.assertSoftWeight("minMaxHoursPerDay", factor * 4, solution);
+        e2.setStudyGroups(Arrays.asList(new StudyGroup(3,2,2)));
+        scoreVerifier.assertSoftWeight("minMaxHoursPerDay", factor * 5, solution);
     }
 
 

@@ -1,5 +1,11 @@
 package de.jensk.optaPlannerHsOsna;
 
+import org.apache.ibatis.jdbc.ScriptRunner;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -12,10 +18,22 @@ import java.util.ArrayList;
 public final class DbConnector {
 
     /**
+     * The name of the database.
+     */
+    private static final String DB_NAME = "planungstoolv2";
+
+    /**
      * The URL to the database including protocol, address, database name, username and password.
      */
     private static final String DB_URL =
-            "jdbc:mysql://localhost/planungstoolv2?user=root&password=root";
+            "jdbc:mysql://localhost/" + DB_NAME + "?user=root&password=root";
+
+    /**
+     * The URL to the database without the database name, so the server can be accessed before
+     * the database is created.
+     */
+    private static final String DB_URL_BEFORE_CREATION =
+            "jdbc:mysql://localhost/?user=root&password=root";
 
     /**
      * The connection to the database.
@@ -38,14 +56,71 @@ public final class DbConnector {
 
     /**
      * Connects to the Database and stores the connection in con.
+     * @param connectToPlanungstoolv2 Set to true, if the connection
+     * should target the planungstoolv2 database.
      */
-    private static void connectToDb() {
+    private static void connectToDb(boolean connectToPlanungstoolv2) {
         try {
-            con = DriverManager.getConnection(DB_URL);
+            if (con != null) {
+                con.close();
+            }
+            if (connectToPlanungstoolv2) {
+                con = DriverManager.getConnection(DB_URL);
+            } else {
+                con = DriverManager.getConnection(DB_URL_BEFORE_CREATION);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    private static void createDataBase() {
+        try {
+            connectToDb(false);
+            InputStream sqlInputStream = App.class.getClassLoader().getResourceAsStream(
+                    "de/jensk/optaPlannerHsOsna/create_database.sql");
+            ScriptRunner sr = new ScriptRunner(con);
+            sr.setLogWriter(null);
+            Reader reader = new BufferedReader(new InputStreamReader(sqlInputStream));
+            sr.runScript(reader);
+            con.close();
+            sqlInputStream.close();
+            System.out.println("==================================");
+            System.out.println("Since the database " + DB_NAME + " was not found,"
+                    + " this seems to be the first time this application has been started.");
+            System.out.println("The database and a default account with administrative"
+                    + " privileges has been created.");
+            System.out.println("Use this account only to create the first real account and"
+                    + " delete it immediately afterwards.\n");
+            System.out.println("Default username: admin@admin.de");
+            System.out.println("Default password: admin");
+            System.out.println("==================================");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Checks if the database already exists. If it doesnt that means this is the first start
+     * of this application so it creates the database.
+     */
+    public static void checkIfDataBaseExistsAndCreateIfNot() {
+        try {
+            connectToDb(false);
+            String query = "SELECT SCHEMA_NAME"
+                    + " FROM INFORMATION_SCHEMA.SCHEMATA"
+                    + " WHERE SCHEMA_NAME = '" + DB_NAME + "';";
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            if (!rs.next()) {
+                createDataBase();
+            }
+            con.close();
+        } catch (Exception e) {
+
+        }
+    }
+
 
     /**
      * Connects to the database and requests data from the timepreference table. <br>
@@ -56,7 +131,7 @@ public final class DbConnector {
         TimePreferenceMap result = new TimePreferenceMap();
         try {
             if (con == null || con.isClosed()) {
-                connectToDb();
+                connectToDb(true);
             }
             String query = "SELECT * FROM timepreference;";
             Statement stmt = con.createStatement();
@@ -81,7 +156,7 @@ public final class DbConnector {
     public static String getCommand() {
         try {
             if (con == null || con.isClosed()) {
-                connectToDb();
+                connectToDb(true);
             }
             String query = "SELECT * FROM communication ORDER BY id;";
             Statement stmt = con.createStatement();
@@ -109,7 +184,7 @@ public final class DbConnector {
         ArrayList<Event> result = new ArrayList<>();
         try {
             if (con == null || con.isClosed()) {
-                connectToDb();
+                connectToDb(true);
             }
             String query = "SELECT * FROM event;";
             Statement stmt = con.createStatement();
@@ -187,7 +262,7 @@ public final class DbConnector {
         RoomMap result = new RoomMap();
         try {
             if (con == null || con.isClosed()) {
-                connectToDb();
+                connectToDb(true);
             }
             String query = "SELECT * FROM room;";
             Statement stmt = con.createStatement();
@@ -219,7 +294,7 @@ public final class DbConnector {
         ArrayList<Integer> result = new ArrayList<>();
         try {
             if (con == null || con.isClosed()) {
-                connectToDb();
+                connectToDb(true);
             }
             String query = "SELECT * FROM room;";
             Statement stmt = con.createStatement();
@@ -243,7 +318,7 @@ public final class DbConnector {
         StudentLoadMap studentLoadMap = new StudentLoadMap();
         try {
             if (con == null || con.isClosed()) {
-                connectToDb();
+                connectToDb(true);
             }
             String query = "SELECT * FROM cohort;";
             Statement stmt = con.createStatement();
@@ -266,7 +341,7 @@ public final class DbConnector {
     public static void writeResultsToDb(CourseSchedule courseSchedule) {
         try {
             if (con == null || con.isClosed()) {
-                connectToDb();
+                connectToDb(true);
             }
             String query = "DELETE FROM results;";
             Statement stmt = con.createStatement();

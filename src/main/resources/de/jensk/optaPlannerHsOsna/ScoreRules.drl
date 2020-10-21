@@ -3,6 +3,8 @@ import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
 import de.jensk.optaPlannerHsOsna.*
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 global HardSoftScoreHolder scoreHolder;
@@ -152,6 +154,7 @@ rule "noGaps"
 
         not Event(day != null, timeSlot != null, day == $day1, timeSlot < $timeSlot1 || timeSlot > $timeSlot2, getStudyGroups() contains $group1 )
 
+
         $filledHoursList : ArrayList(size < $timeSlot2 - $timeSlot1 - 1)
             from collect (Event(day == $day1, timeSlot > $timeSlot1, timeSlot < $timeSlot2, getStudyGroups() contains $group1))
     then
@@ -165,20 +168,20 @@ rule "minMaxHoursPerDay"
         $event1 : Event(day != null, $day1 : day, $timeSlot1: timeSlot, $uniqueId1 : uniqueId, $groupList1 : getStudyGroups())
         $group1 : StudyGroup($cohort1 : cohortId) from $groupList1
 
-        //es darf kein event am selben tag geben, mit der selben kohorte dass eine kleinere unique hat. so wird es nur einmal ausgeführt
         not Event (uniqueId < $uniqueId1, day == $day1, containsCohort($cohort1))
 
-        $result : Integer()
+        $result : List()
             from accumulate ($event2: Event(day != null, $day1 == day, containsCohort($cohort1)),
                 init(HoursAccumulationMap total = new HoursAccumulationMap($cohort1);),
                 action(total.addEvent($event2);),
                 reverse(total.removeEvent($event2);),
-                result(total.getMaxHours()))
+                result(Arrays.asList(total.getMaxHours(),total.getMinHours())))
         $minMaxMap : StudentLoadMap()
     then
         int maxHours = $minMaxMap.getMaxHoursOfCohort($cohort1);
         int minHours = $minMaxMap.getMinHoursOfCohort($cohort1);
-        int penalty = -10 * (maxHours < $result ? $result - maxHours : 0) + -10 * (minHours > $result ? minHours - $result : 0);
+        int penalty = -10 * (maxHours < ((Integer)$result.get(0)) ? ((Integer)$result.get(0)) - maxHours : 0)
+         + -10 * (minHours > ((Integer)$result.get(1)) ? minHours - ((Integer)$result.get(1)) : 0);
         scoreHolder.addSoftConstraintMatch(kcontext, penalty);
 end
 
