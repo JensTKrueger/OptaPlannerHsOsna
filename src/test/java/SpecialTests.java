@@ -3,7 +3,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 
-public class CommonTests {
+public class SpecialTests {
 
     @Test
     public void testHoursAccumulationMapMax(){
