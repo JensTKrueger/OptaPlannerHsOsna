@@ -1,6 +1,9 @@
 package de.jensk.optaPlannerHsOsna;
 
 
+import de.jensk.optaPlannerHsOsna.InformationMaps.RoomMap;
+import de.jensk.optaPlannerHsOsna.InformationMaps.StudentLoadMap;
+import de.jensk.optaPlannerHsOsna.InformationMaps.TimePreferenceMap;
 import org.optaplanner.core.api.domain.solution.PlanningScore;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.solution.ProblemFactCollectionProperty;

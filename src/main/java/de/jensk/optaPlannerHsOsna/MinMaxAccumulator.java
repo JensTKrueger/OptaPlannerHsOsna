@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * This means there are a lot of possible combinations which have to be considered. <br>
  * There needs to be a separate instance for every cohort.
  */
-public class HoursAccumulationMap {
+public class MinMaxAccumulator {
 
     /**
      * The id of the cohort to inspect. It is final because a new instance of this class is needed
@@ -35,7 +35,7 @@ public class HoursAccumulationMap {
      * The object can not be created without a cohort id.
      * @param cohortId The id of the cohort that will be inspected.
      */
-    public HoursAccumulationMap(int cohortId) {
+    public MinMaxAccumulator(int cohortId) {
         this.cohortId = cohortId;
     }
 

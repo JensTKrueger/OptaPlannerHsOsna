@@ -1,5 +1,8 @@
 package de.jensk.optaPlannerHsOsna;
 
+import de.jensk.optaPlannerHsOsna.InformationMaps.RoomMap;
+import de.jensk.optaPlannerHsOsna.InformationMaps.StudentLoadMap;
+import de.jensk.optaPlannerHsOsna.InformationMaps.TimePreferenceMap;
 import org.apache.ibatis.jdbc.ScriptRunner;
 
 import java.io.BufferedReader;

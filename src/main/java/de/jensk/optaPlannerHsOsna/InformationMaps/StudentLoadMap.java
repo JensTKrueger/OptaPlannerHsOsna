@@ -1,4 +1,4 @@
-package de.jensk.optaPlannerHsOsna;
+package de.jensk.optaPlannerHsOsna.InformationMaps;
 
 import java.util.HashMap;
 

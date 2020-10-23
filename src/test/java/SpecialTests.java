@@ -1,4 +1,4 @@
-import de.jensk.optaPlannerHsOsna.HoursAccumulationMap;
+import de.jensk.optaPlannerHsOsna.MinMaxAccumulator;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
@@ -7,7 +7,7 @@ public class SpecialTests {
 
     @Test
     public void testHoursAccumulationMapMax(){
-        HoursAccumulationMap map = new HoursAccumulationMap(1);
+        MinMaxAccumulator map = new MinMaxAccumulator(1);
         map.addHour(1,1);
         map.addHour(2,2);
         map.addHour(3,3);
@@ -26,7 +26,7 @@ public class SpecialTests {
 
     @Test
     public void testHoursAccumulationMapMin(){
-        HoursAccumulationMap map = new HoursAccumulationMap(1);
+        MinMaxAccumulator map = new MinMaxAccumulator(1);
         map.addHour(1,1);
         map.addHour(2,2);
         map.addHour(3,3);

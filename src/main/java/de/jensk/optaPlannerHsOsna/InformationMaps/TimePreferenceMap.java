@@ -1,4 +1,6 @@
-package de.jensk.optaPlannerHsOsna;
+package de.jensk.optaPlannerHsOsna.InformationMaps;
+
+import de.jensk.optaPlannerHsOsna.CourseSchedule;
 
 import java.util.HashMap;
 

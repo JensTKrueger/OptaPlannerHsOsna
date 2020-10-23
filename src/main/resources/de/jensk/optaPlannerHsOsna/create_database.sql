@@ -213,6 +213,7 @@ INSERT INTO `usergroup` (id, name) VALUES ('1', 'Administrator');
 INSERT INTO `usergroup` (id, name) VALUES ('2', 'Dozent');
 
 
+
 -- Lege Administratoraccount zur ersten Benutzung an
 INSERT INTO `users` (prename, surname, email, phone, usergroup, password)
 VALUES ('', 'Standardbenutzer', 'admin@admin.de', '', '1', '$2y$10$0aizOrCUy6hG.zOy.WjLUOHA2mZLvx0hUc1onsRq72Rwl5T3ePqwi');

@@ -1,9 +1,11 @@
 import de.jensk.optaPlannerHsOsna.*;
+import de.jensk.optaPlannerHsOsna.InformationMaps.RoomMap;
+import de.jensk.optaPlannerHsOsna.InformationMaps.StudentLoadMap;
+import de.jensk.optaPlannerHsOsna.InformationMaps.TimePreferenceMap;
 import org.junit.Test;
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.test.impl.score.buildin.hardsoft.HardSoftScoreVerifier;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 
