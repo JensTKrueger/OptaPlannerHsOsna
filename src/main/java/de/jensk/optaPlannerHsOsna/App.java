@@ -31,12 +31,14 @@ public final class App {
             try {
                 Thread.sleep(TIME_BETWEEN_DATABASE_CHECKS);
                 String command = DbConnector.getCommand();
-                if (command != null && command.equals("start_calculation")) {
-                    start();
-                } else if (command != null && command.equals("exit")) {
-                    System.exit(0);
-                } else if (command != null){
-                    throw new RuntimeException("An unknown command has been received: " + command);
+                if (command != null) {
+                    if (command.equals("start_calculation")) {
+                        startSolving();
+                    } else if (command.equals("exit")) {
+                        System.exit(0);
+                    } else {
+                        throw new RuntimeException("Unknown command: " + command);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -49,7 +51,7 @@ public final class App {
      * containing all the information is created and solved to create
      * the best fitting solution. This solution is written to the database afterwards.
      */
-    private static void start() {
+    private static void startSolving() {
         CourseSchedule unsolvedSchedule = new CourseSchedule();
         unsolvedSchedule.setRoomList(DbConnector.getRoomIdList());
         unsolvedSchedule.setEventList(DbConnector.getEventList());

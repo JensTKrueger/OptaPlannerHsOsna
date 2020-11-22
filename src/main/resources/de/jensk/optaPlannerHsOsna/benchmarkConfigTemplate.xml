@@ -5,7 +5,7 @@
     <scoreDirectorFactory>
         <scoreDrl>de/jensk/optaPlannerHsOsna/ScoreRules.drl</scoreDrl>
     </scoreDirectorFactory>
-    <moveThreadCount>AUTO</moveThreadCount>
+    <moveThreadCount>6</moveThreadCount>
     <constructionHeuristic><constructionHeuristicType>FIRST_FIT</constructionHeuristicType></constructionHeuristic>
     <localSearch>
         <unionMoveSelector>
@@ -33,15 +33,10 @@
             </moveIteratorFactory>
         </unionMoveSelector>
         <acceptor>
-            <lateAcceptanceSize>800</lateAcceptanceSize>
         </acceptor>
         <forager>
-            <acceptedCountLimit>4</acceptedCountLimit>
         </forager>
         <termination>
-            <terminationCompositionStyle>OR</terminationCompositionStyle>
-            <unimprovedStepCountLimit>50000</unimprovedStepCountLimit>
-            <hoursSpentLimit>3</hoursSpentLimit>
         </termination>
     </localSearch>
 </solver>

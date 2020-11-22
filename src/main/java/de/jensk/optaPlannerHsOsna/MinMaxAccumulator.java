@@ -61,7 +61,9 @@ public class MinMaxAccumulator {
      */
     public void removeEvent(Event event) {
         event.getStudyGroups().forEach((studyGroup -> {
+            if (studyGroup.getCohortId() == cohortId) {
                 removeHour(studyGroup.getSpecialId());
+            }
         }));
     }
 
@@ -84,12 +86,16 @@ public class MinMaxAccumulator {
      * @param specialId The id of the specialisation.
      */
     public void removeHour(int specialId) {
-        int hoursBefore = specialIdToHours.get(specialId);
-        if (hoursBefore == 1) {
-            specialIdToHours.remove(specialId);
-            specialIdToSpecialCatId.remove(specialId);
-        } else {
-            specialIdToHours.put(specialId, hoursBefore - 1);
+        try {
+            int hoursBefore = specialIdToHours.get(specialId);
+            if (hoursBefore == 1) {
+                specialIdToHours.remove(specialId);
+                specialIdToSpecialCatId.remove(specialId);
+            } else {
+                specialIdToHours.put(specialId, hoursBefore - 1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

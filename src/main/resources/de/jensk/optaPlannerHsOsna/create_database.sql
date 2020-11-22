@@ -12,11 +12,11 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
 
--- Exportiere Datenbank Struktur für planungstoolv2
-CREATE DATABASE IF NOT EXISTS planungstoolv2 /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
-USE planungstoolv2;
+-- Exportiere Datenbank Struktur für schedule_data
+CREATE DATABASE IF NOT EXISTS schedule_data /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
+USE schedule_data;
 
--- Exportiere Struktur von Tabelle planungstoolv2.building
+-- Exportiere Struktur von Tabelle schedule_data.building
 CREATE TABLE IF NOT EXISTS `building` (
                                           `id` int(11) NOT NULL AUTO_INCREMENT,
                                           `name` text NOT NULL DEFAULT '',
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `building` (
 
 -- Daten Export vom Benutzer nicht ausgewählt
 
--- Exportiere Struktur von Tabelle planungstoolv2.cohort
+-- Exportiere Struktur von Tabelle schedule_data.cohort
 CREATE TABLE IF NOT EXISTS `cohort` (
                                         `id` int(11) NOT NULL AUTO_INCREMENT,
                                         `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `cohort` (
 
 -- Daten Export vom Benutzer nicht ausgewählt
 
--- Exportiere Struktur von Tabelle planungstoolv2.communication
+-- Exportiere Struktur von Tabelle schedule_data.communication
 CREATE TABLE IF NOT EXISTS `communication` (
                                                `id` int(11) NOT NULL AUTO_INCREMENT,
                                                `command` text NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `communication` (
 
 -- Daten Export vom Benutzer nicht ausgewählt
 
--- Exportiere Struktur von Tabelle planungstoolv2.event
+-- Exportiere Struktur von Tabelle schedule_data.event
 CREATE TABLE IF NOT EXISTS `event` (
                                        `id` int(11) NOT NULL AUTO_INCREMENT,
                                        `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `event` (
 
 -- Daten Export vom Benutzer nicht ausgewählt
 
--- Exportiere Struktur von Tabelle planungstoolv2.event_feature
+-- Exportiere Struktur von Tabelle schedule_data.event_feature
 CREATE TABLE IF NOT EXISTS `event_feature` (
                                                `event_id` int(11) NOT NULL,
                                                `feature_id` int(11) NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `event_feature` (
 
 -- Daten Export vom Benutzer nicht ausgewählt
 
--- Exportiere Struktur von Tabelle planungstoolv2.event_participation
+-- Exportiere Struktur von Tabelle schedule_data.event_participation
 CREATE TABLE IF NOT EXISTS `event_participation` (
                                                      `event_id` int(11) NOT NULL,
                                                      `special_id` int(11) NOT NULL,
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS `event_participation` (
 
 -- Daten Export vom Benutzer nicht ausgewählt
 
--- Exportiere Struktur von Tabelle planungstoolv2.feature
+-- Exportiere Struktur von Tabelle schedule_data.feature
 CREATE TABLE IF NOT EXISTS `feature` (
                                          `id` int(11) NOT NULL AUTO_INCREMENT,
                                          `name` text NOT NULL DEFAULT '',
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `feature` (
 
 -- Daten Export vom Benutzer nicht ausgewählt
 
--- Exportiere Struktur von Tabelle planungstoolv2.results
+-- Exportiere Struktur von Tabelle schedule_data.results
 CREATE TABLE IF NOT EXISTS `results` (
                                          `id` int(11) NOT NULL AUTO_INCREMENT,
                                          `event_id` int(11) DEFAULT NULL,
@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS `results` (
 
 -- Daten Export vom Benutzer nicht ausgewählt
 
--- Exportiere Struktur von Tabelle planungstoolv2.room
+-- Exportiere Struktur von Tabelle schedule_data.room
 CREATE TABLE IF NOT EXISTS `room` (
                                       `id` int(11) NOT NULL AUTO_INCREMENT,
                                       `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
@@ -119,7 +119,7 @@ CREATE TABLE IF NOT EXISTS `room` (
 
 -- Daten Export vom Benutzer nicht ausgewählt
 
--- Exportiere Struktur von Tabelle planungstoolv2.room_feature
+-- Exportiere Struktur von Tabelle schedule_data.room_feature
 CREATE TABLE IF NOT EXISTS `room_feature` (
                                               `room_id` int(11) NOT NULL,
                                               `feature_id` int(11) NOT NULL,
@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS `room_feature` (
 
 -- Daten Export vom Benutzer nicht ausgewählt
 
--- Exportiere Struktur von Tabelle planungstoolv2.special
+-- Exportiere Struktur von Tabelle schedule_data.special
 CREATE TABLE IF NOT EXISTS `special` (
                                          `cohort_id` int(11) NOT NULL,
                                          `special_cat_id` int(11) NOT NULL,
@@ -147,7 +147,7 @@ CREATE TABLE IF NOT EXISTS `special` (
 
 -- Daten Export vom Benutzer nicht ausgewählt
 
--- Exportiere Struktur von Tabelle planungstoolv2.special_cat
+-- Exportiere Struktur von Tabelle schedule_data.special_cat
 CREATE TABLE IF NOT EXISTS `special_cat` (
                                              `cohort_id` int(11) NOT NULL,
                                              `special_cat_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS `special_cat` (
 
 -- Daten Export vom Benutzer nicht ausgewählt
 
--- Exportiere Struktur von Tabelle planungstoolv2.teacher_event
+-- Exportiere Struktur von Tabelle schedule_data.teacher_event
 CREATE TABLE IF NOT EXISTS `teacher_event` (
                                                `teacher_id` int(11) NOT NULL,
                                                `event_id` int(11) NOT NULL,
@@ -171,7 +171,7 @@ CREATE TABLE IF NOT EXISTS `teacher_event` (
 
 -- Daten Export vom Benutzer nicht ausgewählt
 
--- Exportiere Struktur von Tabelle planungstoolv2.timepreference
+-- Exportiere Struktur von Tabelle schedule_data.timepreference
 CREATE TABLE IF NOT EXISTS `timepreference` (
                                                 `user_id` int(11) NOT NULL,
                                                 `day` int(11) NOT NULL,
@@ -183,7 +183,7 @@ CREATE TABLE IF NOT EXISTS `timepreference` (
 
 -- Daten Export vom Benutzer nicht ausgewählt
 
--- Exportiere Struktur von Tabelle planungstoolv2.usergroup
+-- Exportiere Struktur von Tabelle schedule_data.usergroup
 CREATE TABLE IF NOT EXISTS `usergroup` (
                                            `id` int(11) NOT NULL,
                                            `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
@@ -192,7 +192,7 @@ CREATE TABLE IF NOT EXISTS `usergroup` (
 
 -- Daten Export vom Benutzer nicht ausgewählt
 
--- Exportiere Struktur von Tabelle planungstoolv2.users
+-- Exportiere Struktur von Tabelle schedule_data.users
 CREATE TABLE IF NOT EXISTS `users` (
                                        `id` int(11) NOT NULL AUTO_INCREMENT,
                                        `title` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,

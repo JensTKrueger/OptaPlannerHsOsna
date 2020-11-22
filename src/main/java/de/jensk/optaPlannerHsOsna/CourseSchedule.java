@@ -1,7 +1,7 @@
 package de.jensk.optaPlannerHsOsna;
 
 
-import de.jensk.optaPlannerHsOsna.InformationMaps.RoomMap;
+import de.jensk.optaPlannerHsOsna.InformationMaps.RoomSpecificationsMap;
 import de.jensk.optaPlannerHsOsna.InformationMaps.StudentLoadMap;
 import de.jensk.optaPlannerHsOsna.InformationMaps.TimePreferenceMap;
 import org.optaplanner.core.api.domain.solution.PlanningScore;
@@ -42,7 +42,7 @@ public class CourseSchedule {
     /**
      * Contains information about the capacity, features and building of each room.
      */
-    private RoomMap roomMap;
+    private RoomSpecificationsMap roomSpecificationsMap;
 
     /**
      * Contains every existing timeslot.
@@ -111,22 +111,23 @@ public class CourseSchedule {
 
     /**
      * This method is annotated with @ProblemFactProperty, which means that <br>
-     * the RoomMap which is returned must not change during the process of solving,<br>
-     * because that would result in a score corruption. <br>
+     * the RoomSpecificationsMap which is returned must not change during the process<br>
+     *  of solving, because that would result in a score corruption. <br>
      * Therefore it will stay the same for the whole duration.
-     * @return The RoomMap for this schedule.
+     * @return The RoomSpecificationsMap for this schedule.
      */
     @ProblemFactProperty
-    public RoomMap getRoomMap() {
-        return roomMap;
+    public RoomSpecificationsMap getRoomMap() {
+        return roomSpecificationsMap;
     }
 
     /**
      * Only call this method once at the beginning. Do not call this after the solving started.
-     * @param roomMap The roomMap with the current information about all rooms.
+     * @param roomSpecificationsMap The roomSpecificationsMap with
+     * the current information about all rooms.
      */
-    public void setRoomMap(RoomMap roomMap) {
-        this.roomMap = roomMap;
+    public void setRoomMap(RoomSpecificationsMap roomSpecificationsMap) {
+        this.roomSpecificationsMap = roomSpecificationsMap;
     }
 
     /**
@@ -134,7 +135,7 @@ public class CourseSchedule {
      * the TimePreferenceMap which is returned must not change during the process of solving,<br>
      * because that would result in a score corruption. <br>
      * Therefore it will stay the same for the whole duration.
-     * @return The RoomMap for this schedule.
+     * @return The RoomSpecificationsMap for this schedule.
      */
     @ProblemFactProperty
     public TimePreferenceMap getTimePreferenceMap() {

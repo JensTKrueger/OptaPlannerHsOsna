@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
 group 'de.jensk'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 repositories {
     mavenCentral()
@@ -19,15 +19,14 @@ jar {
 dependencies {
     testImplementation group: 'junit', name: 'junit', version: '4.13'
 
-    compile group: 'org.optaplanner', name: 'optaplanner-core', version: '7.39.0.Final'
+    compile group: 'org.optaplanner', name: 'optaplanner-core', version: '7.44.0.Final'
 
-    compile group: 'org.optaplanner', name: 'optaplanner-test', version: '7.39.0.Final'
+    compile group: 'org.optaplanner', name: 'optaplanner-test', version: '7.44.0.Final'
 
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.30'
 
     compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.20'
 
     compile group: 'org.mybatis', name: 'mybatis', version: '3.5.6'
-
 
 }

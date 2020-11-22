@@ -8,7 +8,7 @@ import java.util.List;
  * This class provides the possibility to store the capacity, the building
  * and the features of a room.
  */
-public class RoomMap {
+public class RoomSpecificationsMap {
 
     /**
      * Stores the capacity of each room.
@@ -29,7 +29,7 @@ public class RoomMap {
     /**
      * The default constructor.
      */
-    public RoomMap() {
+    public RoomSpecificationsMap() {
         capacityMap = new HashMap<>();
         buildingIdMap = new HashMap<>();
         featureListMap = new HashMap<>();

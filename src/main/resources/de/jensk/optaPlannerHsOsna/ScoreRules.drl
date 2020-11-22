@@ -2,6 +2,7 @@ import org.optaplanner.core.api.score.Score;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
 import de.jensk.optaPlannerHsOsna.*
+import de.jensk.optaPlannerHsOsna.InformationMaps.*
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -62,20 +63,19 @@ rule "rewardPreferredTimeSlots"
         $teacherId : Integer() from $event.teacherIds
         TimePreferenceMap(getPreference($teacherId, $day, $timeSlot) == 3)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, 1);
+        scoreHolder.addSoftConstraintMatch(kcontext, 5);
 end
 
 //punishes events which a higher group size than room capacity
 rule "avoidTooSmallRooms"
     when
         Event(roomId != null, groupSize != null, $roomId : roomId, $groupSize : groupSize)
-        RoomMap(getCapacity($roomId) < $groupSize);
+        RoomSpecificationsMap(getCapacity($roomId) < $groupSize);
     then
         scoreHolder.addSoftConstraintMatch(kcontext, -20);
 end
 
 
-//todo: wurde verändert. ist in der in der arbeit selber noch nicht angepasst worden
 rule "punishSameEventDifferentRoom"
     when
         Event(roomId != null, id != null, $leftRoomId : roomId, $leftId : id, $leftUniqueId :uniqueId)
@@ -91,26 +91,22 @@ rule "placeHardEventsEarly"
     scoreHolder.addSoftConstraintMatch(kcontext, -$timeSlot);
 end
 
-
-//punishes if a group of students has to change the buildig from one timeslot to the next
-//todo: wurde verändert. ist in der in der arbeit selber noch nicht angepasst worden
 rule "punishBuildingChangeWithoutBreak"
     when
         Event(roomId != null, day != null, timeSlot != null, $leftDay : day, $leftTimeSlot : timeSlot, $leftStudyGroups : getStudyGroups(), $leftRoomId : roomId )
         Event(roomId != null, day != null, timeSlot != null, $leftDay == day, $leftTimeSlot == timeSlot + 1, $rightStudyGroups : getStudyGroups(), $rightRoomId : roomId )
-        RoomMap(areRoomsInDifferentBuildings($leftRoomId, $rightRoomId) == true)
+        RoomSpecificationsMap(areRoomsInDifferentBuildings($leftRoomId, $rightRoomId) == true)
         $leftStudyGroup : StudyGroup() from $leftStudyGroups
         $rightStudyGroup : StudyGroup($leftStudyGroup.cohortId == cohortId, $leftStudyGroup.specialCatId != specialCatId || $leftStudyGroup.specialId == specialId) from $rightStudyGroups
     then
         scoreHolder.addSoftConstraintMatch(kcontext, -5);
 end
 
-//todo: wurde verändert. ist in der in der arbeit selber noch nicht angepasst worden
 rule "punishMissingRoomFeatures"
     when
         Event(roomId != null, featureIds != null, $roomId : roomId, $wantedFeatures: featureIds)
         $wantedFeatureId : Integer () from $wantedFeatures;
-        RoomMap(doesRoomHaveFeature($roomId, $wantedFeatureId) == false)
+        RoomSpecificationsMap(doesRoomHaveFeature($roomId, $wantedFeatureId) == false)
     then
      scoreHolder.addSoftConstraintMatch(kcontext, -10);
 end
@@ -122,7 +118,7 @@ rule "punishOneHpmDifferences"
         ArrayList(size != 1 , $size : size())
             from collect (Event(day != null, timeSlot != null, $leftDay == day, $leftId == id))
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -10 * ($size - 1));
+        scoreHolder.addSoftConstraintMatch(kcontext, -20 * ($size - 1));
 end
 
 
@@ -138,7 +134,7 @@ rule "punishTwoHpmDifferences"
                 scoreHolder.addSoftConstraintMatch(kcontext, -5 );
             }
         } else {
-            scoreHolder.addSoftConstraintMatch(kcontext, -10  * Math.abs($eventsOnSameDay.size() - 2));
+            scoreHolder.addSoftConstraintMatch(kcontext, -20  * Math.abs($eventsOnSameDay.size() - 2));
         }
 end
 
@@ -172,7 +168,7 @@ rule "minMaxHoursPerDay"
 
         $result : List()
             from accumulate ($event2: Event(day != null, $day1 == day, containsCohort($cohort1)),
-                init(HoursAccumulationMap total = new HoursAccumulationMap($cohort1);),
+                init(MinMaxAccumulator total = new MinMaxAccumulator($cohort1);),
                 action(total.addEvent($event2);),
                 reverse(total.removeEvent($event2);),
                 result(Arrays.asList(total.getMaxHours(),total.getMinHours())))

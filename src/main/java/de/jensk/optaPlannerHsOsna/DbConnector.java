@@ -1,6 +1,6 @@
 package de.jensk.optaPlannerHsOsna;
 
-import de.jensk.optaPlannerHsOsna.InformationMaps.RoomMap;
+import de.jensk.optaPlannerHsOsna.InformationMaps.RoomSpecificationsMap;
 import de.jensk.optaPlannerHsOsna.InformationMaps.StudentLoadMap;
 import de.jensk.optaPlannerHsOsna.InformationMaps.TimePreferenceMap;
 import org.apache.ibatis.jdbc.ScriptRunner;
@@ -23,25 +23,27 @@ public final class DbConnector {
     /**
      * The name of the database.
      */
-    private static final String DB_NAME = "planungstoolv2";
+    private static String dbName = "schedule_data";
 
-    /**
-     * The URL to the database including protocol, address, database name, username and password.
-     */
-    private static final String DB_URL =
-            "jdbc:mysql://localhost/" + DB_NAME + "?user=root&password=root";
-
-    /**
-     * The URL to the database without the database name, so the server can be accessed before
-     * the database is created.
-     */
-    private static final String DB_URL_BEFORE_CREATION =
-            "jdbc:mysql://localhost/?user=root&password=root";
 
     /**
      * The connection to the database.
      */
     private static Connection con;
+
+    public static void setDbName(String newDbName) {
+        dbName = newDbName;
+    }
+
+    /**
+     * Generates an url to the database.
+     * @param includeDbName If set to true, includes the dbname in the url.
+     * @return The URL to the database as a String
+     */
+    private static String getDbUrl(boolean includeDbName) {
+        return "jdbc:mysql://localhost/" + (includeDbName ? dbName : "")
+                + "?user=optaplanner&password=optaplanner";
+    }
 
     static {
         try {
@@ -59,18 +61,18 @@ public final class DbConnector {
 
     /**
      * Connects to the Database and stores the connection in con.
-     * @param connectToPlanungstoolv2 Set to true, if the connection
-     * should target the planungstoolv2 database.
+     * @param connectWithoutSpecificDb Set to true if the connection
+     * should not target a specific database.
      */
-    private static void connectToDb(boolean connectToPlanungstoolv2) {
+    private static void connectToDb(boolean connectWithoutSpecificDb) {
         try {
-            if (con != null) {
+            if (con != null && !con.isClosed()) {
                 con.close();
             }
-            if (connectToPlanungstoolv2) {
-                con = DriverManager.getConnection(DB_URL);
+            if (!connectWithoutSpecificDb) {
+                con = DriverManager.getConnection(getDbUrl(true));
             } else {
-                con = DriverManager.getConnection(DB_URL_BEFORE_CREATION);
+                con = DriverManager.getConnection(getDbUrl(false));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -79,7 +81,7 @@ public final class DbConnector {
 
     private static void createDataBase() {
         try {
-            connectToDb(false);
+            connectToDb(true);
             InputStream sqlInputStream = App.class.getClassLoader().getResourceAsStream(
                     "de/jensk/optaPlannerHsOsna/create_database.sql");
             ScriptRunner sr = new ScriptRunner(con);
@@ -89,7 +91,7 @@ public final class DbConnector {
             con.close();
             sqlInputStream.close();
             System.out.println("==================================");
-            System.out.println("Since the database " + DB_NAME + " was not found,"
+            System.out.println("Since the database " + dbName + " was not found,"
                     + " this seems to be the first time this application has been started.");
             System.out.println("The database and a default account with administrative"
                     + " privileges has been created.");
@@ -109,10 +111,10 @@ public final class DbConnector {
      */
     public static void checkIfDataBaseExistsAndCreateIfNot() {
         try {
-            connectToDb(false);
+            connectToDb(true);
             String query = "SELECT SCHEMA_NAME"
                     + " FROM INFORMATION_SCHEMA.SCHEMATA"
-                    + " WHERE SCHEMA_NAME = '" + DB_NAME + "';";
+                    + " WHERE SCHEMA_NAME = '" + dbName + "';";
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             if (!rs.next()) {
@@ -133,9 +135,7 @@ public final class DbConnector {
     public static TimePreferenceMap getTimePreferenceMap() {
         TimePreferenceMap result = new TimePreferenceMap();
         try {
-            if (con == null || con.isClosed()) {
-                connectToDb(true);
-            }
+            connectToDb(false);
             String query = "SELECT * FROM timepreference;";
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -158,9 +158,7 @@ public final class DbConnector {
      */
     public static String getCommand() {
         try {
-            if (con == null || con.isClosed()) {
-                connectToDb(true);
-            }
+            connectToDb(false);
             String query = "SELECT * FROM communication ORDER BY id;";
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -186,9 +184,7 @@ public final class DbConnector {
     public static ArrayList<Event> getEventList() {
         ArrayList<Event> result = new ArrayList<>();
         try {
-            if (con == null || con.isClosed()) {
-                connectToDb(true);
-            }
+            connectToDb(false);
             String query = "SELECT * FROM event;";
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -259,14 +255,12 @@ public final class DbConnector {
     /**
      * Connects to the database and requests data from the tables room and room_feature.<br>
      * This data is stored in a new TimePreferenceMap.
-     * @return The filled RoomMap.
+     * @return The filled RoomSpecificationsMap.
      */
-    public static RoomMap getRoomMap() {
-        RoomMap result = new RoomMap();
+    public static RoomSpecificationsMap getRoomMap() {
+        RoomSpecificationsMap result = new RoomSpecificationsMap();
         try {
-            if (con == null || con.isClosed()) {
-                connectToDb(true);
-            }
+            connectToDb(false);
             String query = "SELECT * FROM room;";
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -280,8 +274,6 @@ public final class DbConnector {
             while (rs2.next()) {
                 result.putFeature(rs2.getInt("room_id"), rs2.getInt("feature_id"));
             }
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -296,9 +288,7 @@ public final class DbConnector {
     public static ArrayList<Integer> getRoomIdList() {
         ArrayList<Integer> result = new ArrayList<>();
         try {
-            if (con == null || con.isClosed()) {
-                connectToDb(true);
-            }
+            connectToDb(false);
             String query = "SELECT * FROM room;";
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -320,9 +310,7 @@ public final class DbConnector {
     public static StudentLoadMap getStudentLoadMap() {
         StudentLoadMap studentLoadMap = new StudentLoadMap();
         try {
-            if (con == null || con.isClosed()) {
-                connectToDb(true);
-            }
+            connectToDb(false);
             String query = "SELECT * FROM cohort;";
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -343,9 +331,7 @@ public final class DbConnector {
      */
     public static void writeResultsToDb(CourseSchedule courseSchedule) {
         try {
-            if (con == null || con.isClosed()) {
-                connectToDb(true);
-            }
+            connectToDb(false);
             String query = "DELETE FROM results;";
             Statement stmt = con.createStatement();
             stmt.executeUpdate(query);
@@ -377,4 +363,5 @@ public final class DbConnector {
             return currentNumber++;
         }
     }
+
 }

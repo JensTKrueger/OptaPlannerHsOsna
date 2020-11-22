@@ -1,5 +1,5 @@
 import de.jensk.optaPlannerHsOsna.*;
-import de.jensk.optaPlannerHsOsna.InformationMaps.RoomMap;
+import de.jensk.optaPlannerHsOsna.InformationMaps.RoomSpecificationsMap;
 import de.jensk.optaPlannerHsOsna.InformationMaps.StudentLoadMap;
 import de.jensk.optaPlannerHsOsna.InformationMaps.TimePreferenceMap;
 import org.junit.Test;
@@ -81,7 +81,7 @@ public class ScoreConstraintTests {
 
     @Test
     public void rewardPreferredTimeSlots(){
-        int factor = 1;
+        int factor = 5;
         Event e1 = new Event(1,3,1,1, Arrays.asList(1, 2),null,null,null, null);
         Event e2 = new Event(1,3,1,2, Arrays.asList(2, 3),null,null,null, null);
         CourseSchedule solution = new CourseSchedule();
@@ -185,7 +185,7 @@ public class ScoreConstraintTests {
 
     @Test
     public void punishOneHpmDifferences(){
-        int factor = -10;
+        int factor = -20;
         Event e1 = new Event(1,1,null,1, null,null,1,null, 1);
         Event e2 = new Event(1,2,null,2, null,null,1,null, 1);
         Event e3 = new Event(1,3,null,3, null,null,1,null, 1);
@@ -209,7 +209,7 @@ public class ScoreConstraintTests {
     @Test
     public void punishTwoHpmDifferences(){
         int factorNotAdjacent = -5;
-        int factorWrongNumberOfHours = -10;
+        int factorWrongNumberOfHours = -20;
         Event e1 = new Event(1,1,null,1, null,null,1,null, 2);
         Event e2 = new Event(1,2,null,2, null,null,1,null, 2);
         Event e3 = new Event(1,3,null,3, null,null,1,null, 2);
@@ -343,21 +343,21 @@ public class ScoreConstraintTests {
         timePreferenceMap.putPreference(2,1,3,3);
         timePreferenceMap.putPreference(3,1,3,3);
         solution.setTimePreferenceMap(timePreferenceMap);
-        RoomMap roomMap = new RoomMap();
-        roomMap.putCapacity(1,20);
-        roomMap.putCapacity(2,40);
-        roomMap.putCapacity(3,60);
-        roomMap.putCapacity(4,80);
-        roomMap.putBuildingId(1,1);
-        roomMap.putBuildingId(2,1);
-        roomMap.putBuildingId(3,2);
-        roomMap.putBuildingId(4,2);
-        roomMap.putFeature(1,1);
-        roomMap.putFeature(1,2);
-        roomMap.putFeature(1,3);
-        roomMap.putFeature(2,1);
-        roomMap.putFeature(2,2);
-        solution.setRoomMap(roomMap);
+        RoomSpecificationsMap roomSpecificationsMap = new RoomSpecificationsMap();
+        roomSpecificationsMap.putCapacity(1,20);
+        roomSpecificationsMap.putCapacity(2,40);
+        roomSpecificationsMap.putCapacity(3,60);
+        roomSpecificationsMap.putCapacity(4,80);
+        roomSpecificationsMap.putBuildingId(1,1);
+        roomSpecificationsMap.putBuildingId(2,1);
+        roomSpecificationsMap.putBuildingId(3,2);
+        roomSpecificationsMap.putBuildingId(4,2);
+        roomSpecificationsMap.putFeature(1,1);
+        roomSpecificationsMap.putFeature(1,2);
+        roomSpecificationsMap.putFeature(1,3);
+        roomSpecificationsMap.putFeature(2,1);
+        roomSpecificationsMap.putFeature(2,2);
+        solution.setRoomMap(roomSpecificationsMap);
         StudentLoadMap studentLoadMap = new StudentLoadMap();
         studentLoadMap.setMaxHoursOfCohort(1,4);
         studentLoadMap.setMinHoursOfCohort(1,2);

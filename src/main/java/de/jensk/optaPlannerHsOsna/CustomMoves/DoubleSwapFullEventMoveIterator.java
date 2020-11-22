@@ -82,8 +82,8 @@ public class DoubleSwapFullEventMoveIterator implements Iterator<Move<CourseSche
     public Move<CourseSchedule> next() {
         int eventNr1 = workingRandom.nextInt(eventsWithMinTwoHpw.size());
         Event event1 = eventsWithMinTwoHpw.get(eventNr1);
-        Event event2 = null;
         List<Event> eventsWithSameId = allEventsById.get(event1.getId());
+        Event event2 = null;
         while (event2 == null || event2.getUniqueId().equals(event1.getUniqueId())) {
             int eventNr2 = workingRandom.nextInt(eventsWithSameId.size());
             event2 = eventsWithSameId.get(eventNr2);
