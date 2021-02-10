@@ -158,7 +158,6 @@ rule "noGaps"
 end
 
 
-//rechnet für jede kohorte die kombination aus, die die meisten stunden hat
 rule "minMaxHoursPerDay"
     when
         $event1 : Event(day != null, $day1 : day, $timeSlot1: timeSlot, $uniqueId1 : uniqueId, $groupList1 : getStudyGroups())
